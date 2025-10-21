@@ -28,11 +28,11 @@ void main() {
       whenListen(
         bloc,
         Stream.fromIterable(<TodoListState>[]),
-        initialState: const TodoListLoaded(todos: []),
+        initialState: TodoListInitial(),
       );
 
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
-      await tester.pumpAndSettle();
+
       var titleTxt = find.text("Todo List");
 
       expect(titleTxt, findsOneWidget);
@@ -41,28 +41,56 @@ void main() {
     testWidgets('Test - Empty List state', (tester) async {
       whenListen(
         bloc,
-        Stream.fromIterable(<TodoListState>[]),
-        initialState: const TodoListLoaded(todos: []),
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoading(),
+          TodoListLoaded(todos: []),
+        ]),
+        initialState: TodoListInitial(),
       );
 
-      await tester.pumpAndSettle();
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
       var noTodoText = find.text("No Todos Yet");
 
       expect(noTodoText, findsOneWidget);
+    });
+
+    testWidgets('Test - Todo List Loading State', (tester) async {
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListInitial(),
+          TodoListLoading(),
+        ]),
+        initialState: TodoListInitial(),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pump();
+
+      //await tester.pumpAndSettle();
+      /*
+       pump and settle will not work since it will never settle because circular
+       progress animation will prevent it
+      */
+
+      var widget = find.byType(CircularProgressIndicator);
+
+      expect(widget, findsOneWidget);
     });
 
     testWidgets('Test - Single Todo State', (tester) async {
       whenListen(
         bloc,
         Stream.fromIterable(<TodoListState>[
+          TodoListLoading(),
           TodoListLoaded(
             todos: [
               TodoEntity(id: 1, title: "Test Todo", content: "First Todo"),
             ],
           ),
         ]),
-        initialState: const TodoListLoaded(todos: []),
+        initialState: TodoListInitial(),
       );
 
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
