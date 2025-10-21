@@ -1,12 +1,18 @@
+import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:flutter/material.dart';
 
+import 'features/todos/ui/screens/home/home_screen.dart';
+
 void main() {
+  configureDependencies();
+
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -14,21 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(),
+      home: const HomeScreen(),
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
   }
 }
