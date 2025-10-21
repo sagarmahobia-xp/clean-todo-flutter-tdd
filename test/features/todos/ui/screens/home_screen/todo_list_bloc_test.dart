@@ -13,7 +13,7 @@ class GetTodoUseCaseMock extends Mock implements GetTodoUseCase {}
 void main() {
   group("Group- UI - TodoListBloc - Load Todos,", () {
     blocTest(
-      'Test: Test add todo functionality',
+      'Test: Add todo success,',
       build: () {
         var getTodoUseCaseMock = GetTodoUseCaseMock();
 
@@ -29,6 +29,23 @@ void main() {
         TodoListLoaded(
           todos: [TodoEntity(id: 1, title: "title", content: "content")],
         ),
+      ],
+    );
+
+    blocTest(
+      'Test: Add todo failed,',
+      build: () {
+        var getTodoUseCaseMock = GetTodoUseCaseMock();
+
+        when(() => getTodoUseCaseMock()).thenAnswer(
+          (_) async => Left(Failure(message: "Failed to load todos")),
+        );
+        return TodoListBloc(getTodoUseCaseMock);
+      },
+      act: ((bloc) => bloc.add(LoadTodosEvent())),
+      expect: () => [
+        TodoListLoading(),
+        TodoListLoadError(message: "Failed to load todos"),
       ],
     );
   });

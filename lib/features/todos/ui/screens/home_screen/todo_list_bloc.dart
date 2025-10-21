@@ -20,7 +20,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
       getTodoUseCase().then((result) {
         result.fold(
           (left) {
-            emit(TodoListLoadError(message: "Failed to load todo"));
+            emit(TodoListLoadError(message: left.message));
           },
           (right) {
             emit(TodoListLoaded(todos: right));
