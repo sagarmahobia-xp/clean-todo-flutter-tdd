@@ -12,7 +12,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Todo List")),
-      body: Container(),
+      body: Container(
+        child: Center(
+          child: Text("No Todos Yet"),
+        ),
+      ),
     );
   }
 }

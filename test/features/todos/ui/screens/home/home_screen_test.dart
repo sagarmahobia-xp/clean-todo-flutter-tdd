@@ -6,10 +6,16 @@ void main() {
   group("Group- UI - Home,", () {
     testWidgets('Test - App bar', (tester) async {
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
-      await tester.pumpAndSettle();
       var titleTxt = find.text("Todo List");
 
       expect(titleTxt, findsOneWidget);
+    });
+
+    testWidgets('Test - Empty List state', (tester) async {
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      var noTodoText = find.text("No Todos Yet");
+
+      expect(noTodoText, findsOneWidget);
     });
   });
 }
