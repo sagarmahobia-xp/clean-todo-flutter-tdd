@@ -6,10 +6,10 @@ import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
 @singleton
-class AddTodoUseCase extends UseCaseWithoutParam<List<TodoEntity>> {
+class GetTodoUseCase extends UseCaseWithoutParam<List<TodoEntity>> {
   final TodoRepo todoRepo;
 
-  AddTodoUseCase({required this.todoRepo});
+  GetTodoUseCase({required this.todoRepo});
 
   @override
   Future<Either<Failure, List<TodoEntity>>> call() async {

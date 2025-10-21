@@ -1,0 +1,32 @@
+import 'package:bloc/bloc.dart';
+import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
+import 'package:clean_todo_tdd/features/todos/domain/use_cases/add_todo_usecase.dart';
+import 'package:equatable/equatable.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:injectable/injectable.dart';
+
+part 'todo_list_event.dart';
+
+part 'todo_list_state.dart';
+
+@injectable
+class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
+  final GetTodoUseCase getTodoUseCase;
+
+  TodoListBloc(this.getTodoUseCase) : super(TodoListInitial()) {
+    on<LoadTodosEvent>((event, emit) {
+      emit(TodoListLoading());
+
+      getTodoUseCase().then((result) {
+        result.fold(
+          (left) {
+            emit(TodoListLoadError(message: "Failed to load todo"));
+          },
+          (right) {
+            emit(TodoListLoaded(todos: right));
+          },
+        );
+      });
+    });
+  }
+}
