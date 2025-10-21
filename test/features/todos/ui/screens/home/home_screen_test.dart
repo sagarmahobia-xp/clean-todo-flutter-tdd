@@ -1,5 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:clean_todo_tdd/database/drift_db.dart';
 import 'package:clean_todo_tdd/di/di_config.dart';
+import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/ui/blocs/todo_list_bloc.dart';
 import 'package:clean_todo_tdd/features/todos/ui/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -48,6 +50,29 @@ void main() {
       var noTodoText = find.text("No Todos Yet");
 
       expect(noTodoText, findsOneWidget);
+    });
+
+    testWidgets('Test - Single Todo State', (tester) async {
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoaded(
+            todos: [
+              TodoEntity(id: 1, title: "Test Todo", content: "First Todo"),
+            ],
+          ),
+        ]),
+        initialState: const TodoListLoaded(todos: []),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
+
+      var firstTodo = find.text("Test Todo");
+      var firstTodoContent = find.text("First Todo");
+
+      expect(firstTodo, findsOneWidget);
+      expect(firstTodoContent, findsOneWidget);
     });
   });
 }

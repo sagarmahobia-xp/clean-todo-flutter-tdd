@@ -26,6 +26,16 @@ class _HomeScreenState extends State<HomeScreen> {
       body: BlocBuilder<TodoListBloc, TodoListState>(
         bloc: bloc,
         builder: (context, state) {
+          if (state is TodoListLoaded && state.todos.isNotEmpty) {
+            return ListView(
+              children: state.todos.map((e) {
+                return Column(
+                  children: [Text(e.title), Text(e.content ?? "N/A")],
+                );
+              }).toList(),
+            );
+          }
+
           return Container(child: Center(child: Text("No Todos Yet")));
         },
       ),
