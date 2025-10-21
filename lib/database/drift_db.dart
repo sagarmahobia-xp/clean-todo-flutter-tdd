@@ -1,10 +1,10 @@
-import 'package:clean_todo_tdd/features/todos/data/todo_item.dart';
+import 'package:clean_todo_tdd/features/todos/data/models/todo_item.dart';
 import 'package:drift/drift.dart';
 
 part 'drift_db.g.dart';
 
 @DriftDatabase(tables: [TodoItems], views: [TodoItemView])
-class TodoDatabase extends _$Database {
+class TodoDatabase extends _$TodoDatabase {
   TodoDatabase(super.e);
 
   @override
