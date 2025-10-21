@@ -14,19 +14,19 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final GetTodoUseCase getTodoUseCase;
 
   TodoListBloc(this.getTodoUseCase) : super(TodoListInitial()) {
-    on<LoadTodosEvent>((event, emit) {
+    on<LoadTodosEvent>((event, emit) async {
       emit(TodoListLoading());
 
-      getTodoUseCase().then((result) {
-        result.fold(
-          (left) {
-            emit(TodoListLoadError(message: left.message));
-          },
-          (right) {
-            emit(TodoListLoaded(todos: right));
-          },
-        );
-      });
+      var result = await getTodoUseCase();
+
+      result.fold(
+        (left) {
+          emit(TodoListLoadError(message: left.message));
+        },
+        (right) {
+          emit(TodoListLoaded(todos: right));
+        },
+      );
     });
   }
 }
