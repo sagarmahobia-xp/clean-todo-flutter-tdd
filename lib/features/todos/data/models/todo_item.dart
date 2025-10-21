@@ -12,10 +12,3 @@ class TodoItems extends Table {
     title + const Constant(' (') + content + const Constant(')'),
   )();
 }
-
-abstract class TodoItemView extends View {
-  TodoItems get todoItems;
-
-  @override
-  Query<HasResultSet, dynamic> as() => select([todoItems.id]).from(todoItems);
-}

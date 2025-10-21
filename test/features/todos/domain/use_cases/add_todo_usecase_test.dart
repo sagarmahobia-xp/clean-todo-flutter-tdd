@@ -7,23 +7,24 @@ import 'package:mocktail/mocktail.dart';
 class MockTodoRepo extends Mock implements TodoRepo {}
 
 void main() {
-  group('Todo: Test add todo use case functionalities', () {
+  group('Group - Domain - AddTodoUseCase: Insert', () {
     setUp(() {
       configureDependencies();
       getIt.allowReassignment = true;
       getIt.registerSingleton<TodoRepo>(MockTodoRepo());
     });
 
-    test("Test Add todo function", () async {
+    test("Test insert : verify addTodo is called", () async {
       var todoRepo = getIt<TodoRepo>();
       var todo = TodoEntity(title: "Some todo", content: "some content");
 
       when(() => todoRepo.addTodo(todo)).thenAnswer((_) async => 1);
-
       var id = await todoRepo.addTodo(todo);
-
       expect(id, 1);
+      //Verify that addTodo is called
       verify(() => todoRepo.addTodo(todo));
     });
+
+
   });
 }
