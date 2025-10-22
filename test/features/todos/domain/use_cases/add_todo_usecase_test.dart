@@ -31,5 +31,17 @@ void main() {
       expect(result, Right(1));
       verify(() => mockTodoRepo.addTodo(todo)).called(1);
     });
+
+    test('should return failure when repository throws exception', () async {
+      // arrange
+      when(() => mockTodoRepo.addTodo(todo)).thenThrow(Exception("Failed to add todo"));
+
+      // act
+      final result = await addTodoUseCase(todo);
+
+      // assert
+      expect(result.isLeft(), true);
+      verify(() => mockTodoRepo.addTodo(todo)).called(1);
+    });
   });
 }
