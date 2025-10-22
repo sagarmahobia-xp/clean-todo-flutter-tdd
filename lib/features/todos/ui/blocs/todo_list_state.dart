@@ -11,7 +11,6 @@ final class TodoListInitial extends TodoListState {
 
 class TodoListLoading extends TodoListState {
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
@@ -21,7 +20,6 @@ class TodoListLoaded extends TodoListState {
   const TodoListLoaded({required this.todos});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [todos];
 }
 
@@ -31,6 +29,5 @@ class TodoListLoadError extends TodoListState {
   const TodoListLoadError({required this.message});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [message];
 }

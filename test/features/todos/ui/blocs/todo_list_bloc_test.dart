@@ -18,7 +18,7 @@ void main() {
         var getTodoUseCaseMock = GetTodoUseCaseMock();
 
         when(() => getTodoUseCaseMock()).thenAnswer(
-          (_) async =>
+              (_) async =>
               Right([TodoEntity(id: 1, title: "title", content: "content")]),
         );
         return TodoListBloc(getTodoUseCaseMock);
@@ -38,7 +38,7 @@ void main() {
         var getTodoUseCaseMock = GetTodoUseCaseMock();
 
         when(() => getTodoUseCaseMock()).thenAnswer(
-          (_) async => Left(Failure(message: "Failed to load todos")),
+              (_) async => Left(Failure(message: "Failed to load todos")),
         );
         return TodoListBloc(getTodoUseCaseMock);
       },
