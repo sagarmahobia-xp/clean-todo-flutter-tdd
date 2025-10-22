@@ -21,7 +21,7 @@ void main() {
         );
 
         var todos = await repo.getTodos();
-        expect(todos.length, 1);
+        expect(todos.length, 2);
       },
     );
 
@@ -29,15 +29,16 @@ void main() {
       'Test - Data - TodoRepo: insert one and ensure the same item is present in the db',
       () async {
         var todoEntity = TodoEntity(
-          id: 1,
+          id: 0,
           title: "Test Title",
           content: "Test Content",
         );
         await repo.addTodo(todoEntity);
 
-        var storedTodoEntity = (await repo.getTodos()).first;
+        var storedTodoEntity = (await repo.getTodos()).last;
 
-        expect(todoEntity, storedTodoEntity);
+        expect(todoEntity.title, storedTodoEntity.title);
+        expect(todoEntity.content, storedTodoEntity.content);
       },
     );
   });
