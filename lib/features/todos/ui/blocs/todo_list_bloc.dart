@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
-import 'package:clean_todo_tdd/features/todos/domain/use_cases/add_todo_usecase.dart';
+import 'package:clean_todo_tdd/features/todos/domain/use_cases/get_todo_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
