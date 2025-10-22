@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart';
 abstract class UseCaseWithParam<Type, Params> {
   const UseCaseWithParam();
 
-  Either<Failure, Type> call(Params params);
+  Future<Either<Failure, Type>> call(Params params);
 }
 
 abstract class UseCaseWithoutParam<Type> {
