@@ -23,6 +23,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Todo List")),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add),
+      ),
       body: BlocBuilder<TodoListBloc, TodoListState>(
         bloc: bloc,
         builder: (context, state) {
@@ -30,8 +34,21 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state.todos.isNotEmpty) {
               return ListView(
                 children: state.todos.map((e) {
-                  return Column(
-                    children: [Text(e.title), Text(e.content ?? "N/A")],
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          e.title,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(e.content ?? "N/A"),
+                      ],
+                    ),
                   );
                 }).toList(),
               );

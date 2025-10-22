@@ -102,5 +102,14 @@ void main() {
       expect(firstTodo, findsOneWidget);
       expect(firstTodoContent, findsOneWidget);
     });
+
+    testWidgets("Test - add button present in homescreen", (tester) async {
+      //FloatingActionButton
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
+      var fab = find.byType(FloatingActionButton);
+
+      expect(fab, findsOneWidget);
+    });
   });
 }
