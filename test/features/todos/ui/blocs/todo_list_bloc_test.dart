@@ -89,5 +89,32 @@ void main() {
         ),
       ],
     );
+
+    blocTest(
+      'Test: Add todo falied,',
+      build: () {
+        var todo = TodoEntity(
+          title: "Test Add Todo Bloc",
+          content: "Test Add Todo Bloc",
+        );
+
+        when(
+          () => addTodoUseCase(todo),
+        ).thenAnswer((_) async => Left(Failure(message: "Failed to add todo")));
+
+        when(() => getTodoUseCaseMock()).thenAnswer((_) async => Right([todo]));
+        return bloc;
+      },
+      act: (bloc) => bloc.add(
+        AddTodoEvent(
+          title: "Test Add Todo Bloc",
+          content: "Test Add Todo Bloc",
+        ),
+      ),
+      expect: () => [
+        TodoListLoading(),
+        TodoListLoadError(message: 'Failed to add todo'),
+      ],
+    );
   });
 }

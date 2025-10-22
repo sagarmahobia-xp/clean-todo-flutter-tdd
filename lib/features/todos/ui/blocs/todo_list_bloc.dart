@@ -37,14 +37,22 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
       var todo = TodoEntity(title: event.title, content: event.content);
       var addResult = await addTodoUseCase(todo);
-      var result = await getTodoUseCase();
 
-      result.fold(
+      await addResult.fold(
         (left) {
           emit(TodoListLoadError(message: left.message));
         },
-        (right) {
-          emit(TodoListLoaded(todos: right));
+        (right) async {
+          var result = await getTodoUseCase();
+
+          result.fold(
+            (left) {
+              emit(TodoListLoadError(message: left.message));
+            },
+            (right) {
+              emit(TodoListLoaded(todos: right));
+            },
+          );
         },
       );
     });
