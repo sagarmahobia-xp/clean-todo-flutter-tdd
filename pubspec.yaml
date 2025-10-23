@@ -31,6 +31,8 @@ dev_dependencies:
   bloc_test: ^10.0.0
   injectable_generator: ^2.8.1
   build_runner: ^2.7.1
+  integration_test:
+    sdk: flutter
 
   drift_dev: ^2.29.0
 flutter:
