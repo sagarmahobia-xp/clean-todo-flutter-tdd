@@ -1,5 +1,6 @@
 import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:clean_todo_tdd/features/todos/ui/blocs/todo_list_bloc.dart';
+import 'package:clean_todo_tdd/features/todos/ui/widgets/add_todo_form_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,9 +23,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Todo List")),
+      appBar: AppBar(
+        title: Text('Todo List'),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Dialog(
+                child: BlocProvider.value(
+                  value: bloc,
+                  child: AddTodoFormWidget(),
+                ),
+              );
+            },
+          );
+        },
         child: Icon(Icons.add),
       ),
       body: BlocBuilder<TodoListBloc, TodoListState>(
@@ -46,14 +61,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        Text(e.content ?? "N/A"),
+                        Text(e.content ?? 'N/A'),
                       ],
                     ),
                   );
                 }).toList(),
               );
             } else {
-              return Container(child: Center(child: Text("No Todos Yet")));
+              return Container(child: Center(child: Text('No Todos Yet')));
             }
           }
 
