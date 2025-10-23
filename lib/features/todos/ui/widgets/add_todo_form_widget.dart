@@ -35,10 +35,12 @@ class _AddTodoFormWidgetState extends State<AddTodoFormWidget> {
               ),
             ),
             TextFormField(
+              key: const Key('titleField'),
               controller: titleController,
               decoration: InputDecoration(hintText: 'Enter Title'),
             ),
             TextFormField(
+              key: const Key('contentField'),
               controller: contentController,
               decoration: InputDecoration(hintText: 'Enter Content'),
             ),
@@ -46,6 +48,7 @@ class _AddTodoFormWidgetState extends State<AddTodoFormWidget> {
               height: 20,
             ),
             ElevatedButton(
+              key: const Key('addButton'),
               onPressed: () {
                 bloc.add(
                   AddTodoEvent(
