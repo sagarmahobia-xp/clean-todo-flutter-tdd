@@ -56,9 +56,11 @@ void main() {
 
         await tester.enterText(titleField, 'Todo Title');
         await tester.pumpAndSettle();
+        expect(find.text('Todo Title'), findsOneWidget);
 
         await tester.enterText(contentField, 'Todo Content');
         await tester.pumpAndSettle();
+        expect(find.text('Todo Content'), findsOneWidget);
 
         await tester.tap(addButton);
         await tester.pumpAndSettle();
