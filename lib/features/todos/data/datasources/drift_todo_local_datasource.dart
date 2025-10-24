@@ -1,10 +1,12 @@
-import 'package:clean_todo_tdd/database/drift_db.dart';
+
+import 'package:clean_todo_tdd/features/todos/data/database/drift_db.dart';
 import 'package:clean_todo_tdd/features/todos/data/datasources/todo_local_datasource.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
-@Singleton(as: TodoLocalDataSource)
+// @Singleton(as: TodoLocalDataSource)
+//Not used, Replaced with SqfLite DB
 class DriftTodoLocalDataSource implements TodoLocalDataSource {
   final TodoDatabase database;
 

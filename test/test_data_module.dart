@@ -1,4 +1,4 @@
-import 'package:clean_todo_tdd/database/drift_db.dart';
+import 'package:clean_todo_tdd/features/todos/data/database/drift_db.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:injectable/injectable.dart';

@@ -1,34 +1,36 @@
-
-import 'package:clean_todo_tdd/features/todos/data/database/drift_db.dart';
-import 'package:clean_todo_tdd/features/todos/data/datasources/drift_todo_local_datasource.dart';
+import 'package:clean_todo_tdd/features/todos/data/datasources/sqflite_todo_local_datasource.dart';
 import 'package:clean_todo_tdd/features/todos/data/datasources/todo_local_datasource.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
-import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-class TestTodoDatabase extends TodoDatabase {
-  TestTodoDatabase(super.e);
-
-  @override
-  MigrationStrategy get migration {
-    return MigrationStrategy(
-      onCreate: (m) async {
-        await m.createAll();
-        // Don't prefill data for tests
-      },
-    );
-  }
-}
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
-  group('Group - Data - TodoLocalDataSource - Insert, Get', () {
-    late TodoLocalDataSource dataSource;
-    late TodoDatabase database;
+  TestWidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize sqflite for testing
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
 
-    setUp(() {
-      database = TestTodoDatabase(NativeDatabase.memory());
-      dataSource = DriftTodoLocalDataSource(database: database);
+  group('Group - Data - SqfliteTodoLocalDataSource - Insert, Get', () {
+    late TodoLocalDataSource dataSource;
+    late Database database;
+
+    setUp(() async {
+      // Create in-memory database for tests
+      database = await openDatabase(
+        inMemoryDatabasePath,
+        version: 1,
+        onCreate: (db, version) async {
+          await db.execute('''
+            CREATE TABLE todos (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              title TEXT NOT NULL,
+              content TEXT
+            )
+          ''');
+        },
+      );
+      dataSource = SqfliteTodoLocalDataSource(database: database);
     });
 
     tearDown(() async {
@@ -36,7 +38,7 @@ void main() {
     });
 
     test(
-      'Test - Data - TodoLocalDataSource: insert one and ensure items are present in the database',
+      'Test - Data - SqfliteTodoLocalDataSource: insert one and ensure items are present in the database',
       () async {
         // Arrange & Act
         await dataSource.addTodo(
@@ -53,7 +55,7 @@ void main() {
     );
 
     test(
-      'Test - Data - TodoLocalDataSource: insert one and ensure the same item is present in the db',
+      'Test - Data - SqfliteTodoLocalDataSource: insert one and ensure the same item is present in the db',
       () async {
         // Arrange
         var todoEntity = TodoEntity(
@@ -73,7 +75,7 @@ void main() {
     );
 
     test(
-      'Test - Data - TodoLocalDataSource: getTodos returns empty list initially',
+      'Test - Data - SqfliteTodoLocalDataSource: getTodos returns empty list initially',
       () async {
         // Act
         var todos = await dataSource.getTodos();
@@ -85,7 +87,7 @@ void main() {
     );
 
     test(
-      'Test - Data - TodoLocalDataSource: insert multiple todos',
+      'Test - Data - SqfliteTodoLocalDataSource: insert multiple todos',
       () async {
         // Arrange & Act
         await dataSource.addTodo(
