@@ -1,11 +1,11 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:clean_todo_tdd/database/drift_db.dart';
 import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/ui/blocs/todo_list_bloc.dart';
 import 'package:clean_todo_tdd/features/todos/ui/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocktail/mocktail.dart';
 
 class TodoListBlocMock extends Mock implements TodoListBloc {
@@ -14,11 +14,11 @@ class TodoListBlocMock extends Mock implements TodoListBloc {
 }
 
 void main() {
-  group("Group- UI - Home", () {
+  group('Group- UI - Home', () {
     late final TodoListBloc bloc;
 
-    setUpAll(() {
-      configureDependencies();
+    setUpAll(() async {
+      await configureDependencies(environment: Environment.test);
       getIt.allowReassignment = true;
       bloc = TodoListBlocMock();
       getIt.registerFactory<TodoListBloc>(() => bloc);
@@ -33,7 +33,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
 
-      var titleTxt = find.text("Todo List");
+      var titleTxt = find.text('Todo List');
 
       expect(titleTxt, findsOneWidget);
     });
@@ -50,7 +50,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
       await tester.pumpAndSettle();
-      var noTodoText = find.text("No Todos Yet");
+      var noTodoText = find.text('No Todos Yet');
 
       expect(noTodoText, findsOneWidget);
     });
@@ -86,7 +86,7 @@ void main() {
           TodoListLoading(),
           TodoListLoaded(
             todos: [
-              TodoEntity(id: 1, title: "Test Todo", content: "First Todo"),
+              TodoEntity(id: 1, title: 'Test Todo', content: 'First Todo'),
             ],
           ),
         ]),
@@ -96,14 +96,14 @@ void main() {
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
       await tester.pumpAndSettle();
 
-      var firstTodo = find.text("Test Todo");
-      var firstTodoContent = find.text("First Todo");
+      var firstTodo = find.text('Test Todo');
+      var firstTodoContent = find.text('First Todo');
 
       expect(firstTodo, findsOneWidget);
       expect(firstTodoContent, findsOneWidget);
     });
 
-    testWidgets("Test - add button present in homescreen", (tester) async {
+    testWidgets('Test - add button present in homescreen', (tester) async {
       //FloatingActionButton
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
       await tester.pumpAndSettle();

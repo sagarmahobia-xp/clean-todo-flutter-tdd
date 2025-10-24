@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:clean_todo_tdd/erros/failure.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/add_todo_usecase.dart'
@@ -15,7 +14,7 @@ class GetTodoUseCaseMock extends Mock implements GetTodoUseCase {}
 class AddTodoUseCaseMock extends Mock implements AddTodoUseCase {}
 
 void main() {
-  group("Group- UI - TodoListBloc - Load Todos,", () {
+  group('Group- UI - TodoListBloc - Load Todos,', () {
     late TodoListBloc bloc;
     late GetTodoUseCaseMock getTodoUseCaseMock;
     late AddTodoUseCaseMock addTodoUseCase;
@@ -31,7 +30,7 @@ void main() {
       build: () {
         when(() => getTodoUseCaseMock()).thenAnswer(
           (_) async =>
-              Right([TodoEntity(id: 1, title: "title", content: "content")]),
+              Right([TodoEntity(id: 1, title: 'title', content: 'content')]),
         );
         return bloc;
       },
@@ -39,7 +38,7 @@ void main() {
       expect: () => [
         TodoListLoading(),
         TodoListLoaded(
-          todos: [TodoEntity(id: 1, title: "title", content: "content")],
+          todos: [TodoEntity(id: 1, title: 'title', content: 'content')],
         ),
       ],
     );
@@ -48,14 +47,14 @@ void main() {
       'Test: Load todo failed,',
       build: () {
         when(() => getTodoUseCaseMock()).thenAnswer(
-          (_) async => Left(Failure(message: "Failed to load todos")),
+          (_) async => Left(Failure(message: 'Failed to load todos')),
         );
         return bloc;
       },
       act: (bloc) => bloc.add(LoadTodosEvent()),
       expect: () => [
         TodoListLoading(),
-        TodoListLoadError(message: "Failed to load todos"),
+        TodoListLoadError(message: 'Failed to load todos'),
       ],
     );
 
@@ -63,8 +62,8 @@ void main() {
       'Test: Add todo success,',
       build: () {
         var todo = TodoEntity(
-          title: "Test Add Todo Bloc",
-          content: "Test Add Todo Bloc",
+          title: 'Test Add Todo Bloc',
+          content: 'Test Add Todo Bloc',
         );
 
         when(() => addTodoUseCase(todo)).thenAnswer((_) async => Right(1));
@@ -73,8 +72,8 @@ void main() {
       },
       act: (bloc) => bloc.add(
         AddTodoEvent(
-          title: "Test Add Todo Bloc",
-          content: "Test Add Todo Bloc",
+          title: 'Test Add Todo Bloc',
+          content: 'Test Add Todo Bloc',
         ),
       ),
       expect: () => [
@@ -82,8 +81,8 @@ void main() {
         TodoListLoaded(
           todos: [
             TodoEntity(
-              title: "Test Add Todo Bloc",
-              content: "Test Add Todo Bloc",
+              title: 'Test Add Todo Bloc',
+              content: 'Test Add Todo Bloc',
             ),
           ],
         ),
@@ -94,21 +93,21 @@ void main() {
       'Test: Add todo falied,',
       build: () {
         var todo = TodoEntity(
-          title: "Test Add Todo Bloc",
-          content: "Test Add Todo Bloc",
+          title: 'Test Add Todo Bloc',
+          content: 'Test Add Todo Bloc',
         );
 
         when(
           () => addTodoUseCase(todo),
-        ).thenAnswer((_) async => Left(Failure(message: "Failed to add todo")));
+        ).thenAnswer((_) async => Left(Failure(message: 'Failed to add todo')));
 
         when(() => getTodoUseCaseMock()).thenAnswer((_) async => Right([todo]));
         return bloc;
       },
       act: (bloc) => bloc.add(
         AddTodoEvent(
-          title: "Test Add Todo Bloc",
-          content: "Test Add Todo Bloc",
+          title: 'Test Add Todo Bloc',
+          content: 'Test Add Todo Bloc',
         ),
       ),
       expect: () => [

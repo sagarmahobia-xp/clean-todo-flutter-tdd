@@ -1,10 +1,12 @@
 import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 
 import 'features/todos/ui/screens/home/home_screen.dart';
 
-void main() {
-  configureDependencies();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await configureDependencies(environment: Environment.prod);
 
   runApp(const MyApp());
 

@@ -2,6 +2,7 @@ import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:clean_todo_tdd/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:injectable/injectable.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
@@ -10,8 +11,8 @@ void main() {
   testWidgets("E2E, Add todo and ensure the same is present in view", (
     tester,
   ) async {
-    configureDependencies();
-    await tester.pumpWidget(MyApp());
+    await configureDependencies(environment: Environment.test);
+    await tester.pumpWidget(const MyApp());
     await tester.pumpAndSettle();
     var button = find.byType(FloatingActionButton);
 

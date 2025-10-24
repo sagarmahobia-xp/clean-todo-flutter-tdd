@@ -1,11 +1,7 @@
-import 'dart:io';
-
 import 'package:clean_todo_tdd/database/drift_db.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:injectable/injectable.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 
 class TestTodoDatabase extends TodoDatabase {
   TestTodoDatabase(super.e);
@@ -22,19 +18,9 @@ class TestTodoDatabase extends TodoDatabase {
 }
 
 @module
-abstract class DataModule {
-  @Environment(Environment.prod)
+abstract class TestDataModule {
   @singleton
-  @preResolve
-  Future<TodoDatabase> getProductionDatabase() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(path.join(dbFolder.path, 'todo_db.sqlite'));
-    return TodoDatabase(NativeDatabase.createInBackground(file));
-  }
-
-  @Environment(Environment.test)
-  @singleton
-  TodoDatabase getTestDatabase() {
+  TodoDatabase getDatabase() {
     return TestTodoDatabase(NativeDatabase.memory());
   }
 }
