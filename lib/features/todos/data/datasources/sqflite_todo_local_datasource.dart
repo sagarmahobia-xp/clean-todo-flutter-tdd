@@ -15,6 +15,7 @@ class SqfliteTodoLocalDataSource implements TodoLocalDataSource {
       {
         TodoSqfliteDatabase.columnTitle: todo.title,
         TodoSqfliteDatabase.columnContent: todo.content,
+        TodoSqfliteDatabase.columnCompleted: todo.completed ? 1 : 0,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -31,7 +32,20 @@ class SqfliteTodoLocalDataSource implements TodoLocalDataSource {
         id: map[TodoSqfliteDatabase.columnId] as int,
         title: map[TodoSqfliteDatabase.columnTitle] as String,
         content: map[TodoSqfliteDatabase.columnContent] as String?,
+        completed: map[TodoSqfliteDatabase.columnCompleted] == 1,
       );
     }).toList();
+  }
+
+  @override
+  Future<void> markComplete(int id, bool completed) async {
+    await database.update(
+      TodoSqfliteDatabase.tableTodos,
+      {
+        TodoSqfliteDatabase.columnCompleted: completed ? 1 : 0,
+      },
+      where: '${TodoSqfliteDatabase.columnId} = ?',
+      whereArgs: [id],
+    );
   }
 }

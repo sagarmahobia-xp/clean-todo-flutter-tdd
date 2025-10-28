@@ -4,4 +4,6 @@ abstract class TodoLocalDataSource {
   Future<int?> addTodo(TodoEntity todo);
   
   Future<List<TodoEntity>> getTodos();
+  
+  Future<void> markComplete(int id, bool completed);
 }

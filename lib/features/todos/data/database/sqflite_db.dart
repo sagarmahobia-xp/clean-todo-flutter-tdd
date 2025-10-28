@@ -6,14 +6,16 @@ class TodoSqfliteDatabase {
   static const String columnId = 'id';
   static const String columnTitle = 'title';
   static const String columnContent = 'content';
+  static const String columnCompleted = 'completed';
 
   TodoSqfliteDatabase._();
 
   static Future<Database> createDatabase(String path) async {
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -24,8 +26,9 @@ class TodoSqfliteDatabase {
     
     return await openDatabase(
       inMemoryDatabasePath,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -34,8 +37,15 @@ class TodoSqfliteDatabase {
       CREATE TABLE $tableTodos (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
         $columnTitle TEXT NOT NULL,
-        $columnContent TEXT
+        $columnContent TEXT,
+        $columnCompleted INTEGER DEFAULT 0
       )
     ''');
+  }
+
+  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE $tableTodos ADD COLUMN $columnCompleted INTEGER DEFAULT 0');
+    }
   }
 }

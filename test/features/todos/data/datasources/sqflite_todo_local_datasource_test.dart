@@ -25,7 +25,8 @@ void main() {
             CREATE TABLE todos (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               title TEXT NOT NULL,
-              content TEXT
+              content TEXT,
+              completed INTEGER DEFAULT 0
             )
           ''');
         },
@@ -107,6 +108,50 @@ void main() {
         expect(todos[0].title, 'Todo 1');
         expect(todos[1].title, 'Todo 2');
         expect(todos[2].title, 'Todo 3');
+      },
+    );
+
+    test(
+      'Test - Data - SqfliteTodoLocalDataSource: mark a todo as complete',
+      () async {
+        // Arrange
+        await dataSource.addTodo(
+          TodoEntity(id: 0, title: 'Test Todo', content: 'Test Content'),
+        );
+        var todos = await dataSource.getTodos();
+        var todoId = todos.first.id;
+
+        // Verify initial state
+        expect(todos.first.completed, false);
+
+        // Act
+        await dataSource.markComplete(todoId, true);
+        var updatedTodos = await dataSource.getTodos();
+
+        // Assert
+        expect(updatedTodos.firstWhere((todo) => todo.id == todoId).completed, true);
+      },
+    );
+
+    test(
+      'Test - Data - SqfliteTodoLocalDataSource: mark a todo as incomplete',
+      () async {
+        // Arrange
+        await dataSource.addTodo(
+          TodoEntity(id: 0, title: 'Test Todo', content: 'Test Content', completed: true),
+        );
+        var todos = await dataSource.getTodos();
+        var todoId = todos.first.id;
+
+        // Verify initial state
+        expect(todos.first.completed, true);
+
+        // Act
+        await dataSource.markComplete(todoId, false);
+        var updatedTodos = await dataSource.getTodos();
+
+        // Assert
+        expect(updatedTodos.firstWhere((todo) => todo.id == todoId).completed, false);
       },
     );
   });
