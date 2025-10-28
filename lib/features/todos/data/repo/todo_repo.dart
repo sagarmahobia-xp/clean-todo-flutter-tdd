@@ -18,4 +18,14 @@ class DriftTodoRepo extends TodoRepo {
   Future<List<TodoEntity>> getTodos() async {
     return await localDataSource.getTodos();
   }
+
+  @override
+  Future<void> markComplete(int id) async {
+    await localDataSource.markComplete(id);
+  }
+
+  @override
+  Future<void> markIncomplete(int id) async {
+    await localDataSource.markIncomplete(id);
+  }
 }

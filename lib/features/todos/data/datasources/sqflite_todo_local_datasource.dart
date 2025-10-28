@@ -38,11 +38,23 @@ class SqfliteTodoLocalDataSource implements TodoLocalDataSource {
   }
 
   @override
-  Future<void> markComplete(int id, bool completed) async {
+  Future<void> markComplete(int id) async {
     await database.update(
       TodoSqfliteDatabase.tableTodos,
       {
-        TodoSqfliteDatabase.columnCompleted: completed ? 1 : 0,
+        TodoSqfliteDatabase.columnCompleted: 1, // Set to true (completed)
+      },
+      where: '${TodoSqfliteDatabase.columnId} = ?',
+      whereArgs: [id],
+    );
+  }
+
+  @override
+  Future<void> markIncomplete(int id) async {
+    await database.update(
+      TodoSqfliteDatabase.tableTodos,
+      {
+        TodoSqfliteDatabase.columnCompleted: 0, // Set to false (not completed)
       },
       where: '${TodoSqfliteDatabase.columnId} = ?',
       whereArgs: [id],

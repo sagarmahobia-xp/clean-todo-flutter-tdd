@@ -125,7 +125,7 @@ void main() {
         expect(todos.first.completed, false);
 
         // Act
-        await dataSource.markComplete(todoId, true);
+        await dataSource.markComplete(todoId);
         var updatedTodos = await dataSource.getTodos();
 
         // Assert
@@ -147,7 +147,7 @@ void main() {
         expect(todos.first.completed, true);
 
         // Act
-        await dataSource.markComplete(todoId, false);
+        await dataSource.markIncomplete(todoId);
         var updatedTodos = await dataSource.getTodos();
 
         // Assert

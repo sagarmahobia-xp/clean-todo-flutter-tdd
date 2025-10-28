@@ -5,4 +5,8 @@ abstract class TodoRepo {
 
   Future<List<TodoEntity>> getTodos();
 
+  Future<void> markComplete(int id);
+
+  Future<void> markIncomplete(int id);
+
 }
