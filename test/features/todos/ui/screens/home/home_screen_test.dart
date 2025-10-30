@@ -178,5 +178,36 @@ void main() {
         () => bloc.add(const MarkTodoIncompleteEvent(todoId: 1)),
       ).called(1);
     });
+
+    testWidgets('Test - Deleting todo dispatches correct event', (
+      tester,
+    ) async {
+      final testTodos = [
+        TodoEntity(
+          id: 1,
+          title: 'Delete Todo',
+          content: 'Content to delete',
+          completed: false,
+        ),
+      ];
+
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoading(),
+          TodoListLoaded(todos: testTodos),
+        ]),
+        initialState: TodoListInitial(),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
+
+      // Find and tap the delete icon
+      await tester.tap(find.byIcon(Icons.delete));
+      await tester.pump();
+
+      verify(() => bloc.add(const DeleteTodoEvent(todoId: 1))).called(1);
+    });
   });
 }

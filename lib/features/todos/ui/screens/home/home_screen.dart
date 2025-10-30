@@ -56,6 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     onChanged: (e) {
                       onCheckOrUncheckOfTodoDispatchEventToBloc(e, todo);
                     },
+                    onDelete: () {
+                      bloc.add(DeleteTodoEvent(todoId: todo.id));
+                    },
                   );
                 }).toList(),
               );
