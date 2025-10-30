@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/add_todo_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/get_todo_usecase.dart';
+import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_complete_usecase.dart';
+import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_incomplete_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
@@ -14,9 +16,15 @@ part 'todo_list_state.dart';
 class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final GetTodoUseCase getTodoUseCase;
   final AddTodoUseCase addTodoUseCase;
+  final MarkTodoCompleteUseCase markTodoCompleteUseCase;
+  final MarkTodoIncompleteUseCase markTodoIncompleteUseCase;
 
-  TodoListBloc(this.getTodoUseCase, this.addTodoUseCase)
-    : super(TodoListInitial()) {
+  TodoListBloc(
+    this.getTodoUseCase,
+    this.addTodoUseCase,
+    this.markTodoCompleteUseCase,
+    this.markTodoIncompleteUseCase,
+  ) : super(TodoListInitial()) {
     on<LoadTodosEvent>((event, emit) async {
       emit(TodoListLoading());
 
@@ -50,6 +58,54 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
               emit(TodoListLoadError(message: left.message));
             },
             (right) {
+              emit(TodoListLoaded(todos: right));
+            },
+          );
+        },
+      );
+    });
+
+    on<MarkTodoCompleteEvent>((event, emit) async {
+      emit(TodoListLoading());
+
+      var todo = TodoEntity(id: event.todoId, title: '', content: '', completed: true);
+      var result = await markTodoCompleteUseCase(todo);
+
+      await result.fold(
+        (left) async {
+          emit(TodoListLoadError(message: left.message));
+        },
+        (right) async {
+          var todosResult = await getTodoUseCase();
+          await todosResult.fold(
+            (left) async {
+              emit(TodoListLoadError(message: left.message));
+            },
+            (right) async {
+              emit(TodoListLoaded(todos: right));
+            },
+          );
+        },
+      );
+    });
+
+    on<MarkTodoIncompleteEvent>((event, emit) async {
+      emit(TodoListLoading());
+
+      var todo = TodoEntity(id: event.todoId, title: '', content: '', completed: false);
+      var result = await markTodoIncompleteUseCase(todo);
+
+      await result.fold(
+        (left) async {
+          emit(TodoListLoadError(message: left.message));
+        },
+        (right) async {
+          var todosResult = await getTodoUseCase();
+          await todosResult.fold(
+            (left) async {
+              emit(TodoListLoadError(message: left.message));
+            },
+            (right) async {
               emit(TodoListLoaded(todos: right));
             },
           );

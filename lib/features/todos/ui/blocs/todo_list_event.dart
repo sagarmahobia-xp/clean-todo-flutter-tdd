@@ -18,3 +18,21 @@ class AddTodoEvent extends TodoListEvent {
   @override
   List<Object?> get props => [title, content];
 }
+
+class MarkTodoCompleteEvent extends TodoListEvent {
+  final int todoId;
+
+  const MarkTodoCompleteEvent({required this.todoId});
+
+  @override
+  List<Object?> get props => [todoId];
+}
+
+class MarkTodoIncompleteEvent extends TodoListEvent {
+  final int todoId;
+
+  const MarkTodoIncompleteEvent({required this.todoId});
+
+  @override
+  List<Object?> get props => [todoId];
+}
