@@ -6,12 +6,9 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 @module
 abstract class DataModule {
-
-
-  // Sqflite database providers
+  // Production database provider
   @Environment(Environment.prod)
   @singleton
   @preResolve
@@ -21,25 +18,10 @@ abstract class DataModule {
     return await TodoSqfliteDatabase.createDatabase(dbPath);
   }
 
-  // Sqflite data source providers (currently in use)
+  // Production data source provider
   @Environment(Environment.prod)
   @singleton
   TodoLocalDataSource getProductionDataSource(Database database) {
-    return SqfliteTodoLocalDataSource(database: database);
-  }
-
-
-
-  @Environment(Environment.test)
-  @singleton
-  @preResolve
-  Future<Database> getTestSqfliteDatabase() async {
-    return await TodoSqfliteDatabase.createInMemoryDatabase();
-  }
-
-  @Environment(Environment.test)
-  @singleton
-  TodoLocalDataSource getTestDataSource(Database database) {
     return SqfliteTodoLocalDataSource(database: database);
   }
 }
