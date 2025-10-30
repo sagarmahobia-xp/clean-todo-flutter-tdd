@@ -10,4 +10,6 @@ abstract class TodoLocalDataSource {
   Future<void> markIncomplete(int id);
   
   Future<void> deleteTodo(int id);
+  
+  Future<void> updateTodo(TodoEntity todo);
 }

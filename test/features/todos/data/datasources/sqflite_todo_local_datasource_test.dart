@@ -177,5 +177,101 @@ void main() {
         expect(updatedTodos.length, 0);
       },
     );
+
+    test(
+      'Test - Data - SqfliteTodoLocalDataSource: update a todo',
+      () async {
+        // Arrange
+        var initialTodo = TodoEntity(id: 0, title: 'Initial Title', content: 'Initial Content', completed: false);
+        await dataSource.addTodo(initialTodo);
+        var todos = await dataSource.getTodos();
+        var todoId = todos.first.id;
+        var updatedTodo = TodoEntity(
+          id: todoId,
+          title: 'Updated Title',
+          content: 'Updated Content',
+          completed: true,
+        );
+
+        // Verify initial state
+        expect(todos.first.title, 'Initial Title');
+        expect(todos.first.content, 'Initial Content');
+        expect(todos.first.completed, false);
+
+        // Act
+        await dataSource.updateTodo(updatedTodo);
+        var updatedTodos = await dataSource.getTodos();
+
+        // Assert
+        var todo = updatedTodos.firstWhere((todo) => todo.id == todoId);
+        expect(todo.title, 'Updated Title');
+        expect(todo.content, 'Updated Content');
+        expect(todo.completed, true);
+      },
+    );
+
+    test(
+      'Test - Data - SqfliteTodoLocalDataSource: update only title',
+      () async {
+        // Arrange
+        var initialTodo = TodoEntity(id: 0, title: 'Initial Title', content: 'Initial Content', completed: true);
+        await dataSource.addTodo(initialTodo);
+        var todos = await dataSource.getTodos();
+        var todoId = todos.first.id;
+        var updatedTodo = TodoEntity(
+          id: todoId,
+          title: 'Updated Title',
+          content: 'Initial Content', // Keep the same
+          completed: true, // Keep the same
+        );
+
+        // Verify initial state
+        expect(todos.first.title, 'Initial Title');
+        expect(todos.first.content, 'Initial Content');
+        expect(todos.first.completed, true);
+
+        // Act
+        await dataSource.updateTodo(updatedTodo);
+        var updatedTodos = await dataSource.getTodos();
+
+        // Assert
+        var todo = updatedTodos.firstWhere((todo) => todo.id == todoId);
+        expect(todo.title, 'Updated Title');
+        expect(todo.content, 'Initial Content'); // Should remain unchanged
+        expect(todo.completed, true); // Should remain unchanged
+      },
+    );
+
+    test(
+      'Test - Data - SqfliteTodoLocalDataSource: update only completion status',
+      () async {
+        // Arrange
+        var initialTodo = TodoEntity(id: 0, title: 'Initial Title', content: 'Initial Content', completed: false);
+        await dataSource.addTodo(initialTodo);
+        var todos = await dataSource.getTodos();
+        var todoId = todos.first.id;
+        var updatedTodo = TodoEntity(
+          id: todoId,
+          title: 'Initial Title', // Keep the same
+          content: 'Initial Content', // Keep the same
+          completed: true,
+        );
+
+        // Verify initial state
+        expect(todos.first.title, 'Initial Title');
+        expect(todos.first.content, 'Initial Content');
+        expect(todos.first.completed, false);
+
+        // Act
+        await dataSource.updateTodo(updatedTodo);
+        var updatedTodos = await dataSource.getTodos();
+
+        // Assert
+        var todo = updatedTodos.firstWhere((todo) => todo.id == todoId);
+        expect(todo.title, 'Initial Title'); // Should remain unchanged
+        expect(todo.content, 'Initial Content'); // Should remain unchanged
+        expect(todo.completed, true);
+      },
+    );
   });
 }

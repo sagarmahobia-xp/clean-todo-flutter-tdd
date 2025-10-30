@@ -69,4 +69,18 @@ class SqfliteTodoLocalDataSource implements TodoLocalDataSource {
       whereArgs: [id],
     );
   }
+
+  @override
+  Future<void> updateTodo(TodoEntity todo) async {
+    await database.update(
+      TodoSqfliteDatabase.tableTodos,
+      {
+        TodoSqfliteDatabase.columnTitle: todo.title,
+        TodoSqfliteDatabase.columnContent: todo.content,
+        TodoSqfliteDatabase.columnCompleted: todo.completed ? 1 : 0,
+      },
+      where: '${TodoSqfliteDatabase.columnId} = ?',
+      whereArgs: [todo.id],
+    );
+  }
 }
