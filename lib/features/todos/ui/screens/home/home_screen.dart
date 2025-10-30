@@ -1,4 +1,5 @@
 import 'package:clean_todo_tdd/di/di_config.dart';
+import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/ui/blocs/todo_list_bloc.dart';
 import 'package:clean_todo_tdd/features/todos/ui/widgets/add_todo_form_widget.dart';
 import 'package:clean_todo_tdd/features/todos/ui/widgets/todo_item_widget.dart';
@@ -49,19 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state is TodoListLoaded) {
             if (state.todos.isNotEmpty) {
               return ListView(
-                children: state.todos.map((e) {
+                children: state.todos.map((todo) {
                   return TodoItemWidget(
-                    todo: e,
-                    onChanged: (bool value) {
-                      if (value) {
-                        context.read<TodoListBloc>().add(
-                              MarkTodoCompleteEvent(todoId: e.id),
-                            );
-                      } else {
-                        context.read<TodoListBloc>().add(
-                              MarkTodoIncompleteEvent(todoId: e.id),
-                            );
-                      }
+                    todo: todo,
+                    onChanged: (e) {
+                      onCheckOrUncheckOfTodoDispatchEventToBloc(e, todo);
                     },
                   );
                 }).toList(),
@@ -75,6 +68,21 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  void onCheckOrUncheckOfTodoDispatchEventToBloc(
+    bool value,
+    TodoEntity e,
+  ) {
+    if (value) {
+      bloc.add(
+        MarkTodoCompleteEvent(todoId: e.id),
+      );
+    } else {
+      bloc.add(
+        MarkTodoIncompleteEvent(todoId: e.id),
+      );
+    }
   }
 
   @override

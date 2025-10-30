@@ -111,5 +111,72 @@ void main() {
 
       expect(fab, findsOneWidget);
     });
+
+    testWidgets('Test - Marking todo as complete dispatches correct event', (
+      tester,
+    ) async {
+      final testTodos = [
+        TodoEntity(
+          id: 1,
+          title: 'Incomplete Todo',
+          content: 'Content',
+          completed: false,
+        ),
+      ];
+
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoading(),
+          TodoListLoaded(todos: testTodos),
+        ]),
+        initialState: TodoListInitial(),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
+
+      final titleFinder = find.text('Incomplete Todo');
+      final titleWidget = tester.widget<Text>(titleFinder);
+      final titleStyle = titleWidget.style as TextStyle;
+      expect(titleStyle.decoration, isNot(TextDecoration.lineThrough));
+
+      await tester.tap(find.byType(Checkbox).first);
+      await tester.pump();
+
+      verify(() => bloc.add(const MarkTodoCompleteEvent(todoId: 1))).called(1);
+    });
+
+    testWidgets('Test - Marking todo as incomplete dispatches correct event', (
+      tester,
+    ) async {
+      final testTodos = [
+        TodoEntity(
+          id: 1,
+          title: 'Complete Todo',
+          content: 'Content',
+          completed: true,
+        ),
+      ];
+
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoading(),
+          TodoListLoaded(todos: testTodos),
+        ]),
+        initialState: TodoListInitial(),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(Checkbox).first);
+      await tester.pump();
+
+      verify(
+        () => bloc.add(const MarkTodoIncompleteEvent(todoId: 1)),
+      ).called(1);
+    });
   });
 }
