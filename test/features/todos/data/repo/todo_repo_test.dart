@@ -73,5 +73,37 @@ void main() {
         verify(() => mockDataSource.getTodos()).called(1);
       },
     );
+
+    group('Group - Repository - markComplete', () {
+      test('should call the data source with the correct id', () async {
+        // arrange
+        const id = 1;
+        when(
+          () => mockDataSource.markComplete(id),
+        ).thenAnswer((_) async => null);
+
+        // act
+        await repo.markComplete(id);
+
+        // assert
+        verify(() => mockDataSource.markComplete(id)).called(1);
+      });
+    });
+
+    group('Group - Repository - markIncomplete', () {
+      test('should call the data source with the correct id', () async {
+        // arrange
+        const id = 1;
+        when(
+          () => mockDataSource.markIncomplete(id),
+        ).thenAnswer((_) async {});
+
+        // act
+        await repo.markIncomplete(id);
+
+        // assert
+        verify(() => mockDataSource.markIncomplete(id)).called(1);
+      });
+    });
   });
 }
