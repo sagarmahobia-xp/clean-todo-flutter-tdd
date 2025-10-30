@@ -60,4 +60,13 @@ class SqfliteTodoLocalDataSource implements TodoLocalDataSource {
       whereArgs: [id],
     );
   }
+
+  @override
+  Future<void> deleteTodo(int id) async {
+    await database.delete(
+      TodoSqfliteDatabase.tableTodos,
+      where: '${TodoSqfliteDatabase.columnId} = ?',
+      whereArgs: [id],
+    );
+  }
 }

@@ -154,5 +154,28 @@ void main() {
         expect(updatedTodos.firstWhere((todo) => todo.id == todoId).completed, false);
       },
     );
+
+    test(
+      'Test - Data - SqfliteTodoLocalDataSource: delete a todo',
+      () async {
+        // Arrange
+        await dataSource.addTodo(
+          TodoEntity(id: 0, title: 'Todo to Delete', content: 'Content to Delete'),
+        );
+        var todos = await dataSource.getTodos();
+        var todoId = todos.first.id;
+        
+        // Verify initial state
+        expect(todos.length, 1);
+        expect(todos.first.title, 'Todo to Delete');
+
+        // Act
+        await dataSource.deleteTodo(todoId);
+        var updatedTodos = await dataSource.getTodos();
+
+        // Assert
+        expect(updatedTodos.length, 0);
+      },
+    );
   });
 }
