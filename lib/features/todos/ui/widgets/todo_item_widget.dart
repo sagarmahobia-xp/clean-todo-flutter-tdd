@@ -5,10 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TodoItemWidget extends StatelessWidget {
   final TodoEntity todo;
+  final Function(bool) onChanged;
 
   const TodoItemWidget({
     super.key,
     required this.todo,
+    required this.onChanged,
   });
 
   @override
@@ -24,15 +26,7 @@ class TodoItemWidget extends StatelessWidget {
           value: todo.completed,
           onChanged: (bool? value) {
             if (value != null) {
-              if (value) {
-                context.read<TodoListBloc>().add(
-                  MarkTodoCompleteEvent(todoId: todo.id),
-                );
-              } else {
-                context.read<TodoListBloc>().add(
-                  MarkTodoIncompleteEvent(todoId: todo.id),
-                );
-              }
+              onChanged(value);
             }
           },
         ),

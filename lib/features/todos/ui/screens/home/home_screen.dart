@@ -50,7 +50,20 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state.todos.isNotEmpty) {
               return ListView(
                 children: state.todos.map((e) {
-                  return TodoItemWidget(todo: e);
+                  return TodoItemWidget(
+                    todo: e,
+                    onChanged: (bool value) {
+                      if (value) {
+                        context.read<TodoListBloc>().add(
+                              MarkTodoCompleteEvent(todoId: e.id),
+                            );
+                      } else {
+                        context.read<TodoListBloc>().add(
+                              MarkTodoIncompleteEvent(todoId: e.id),
+                            );
+                      }
+                    },
+                  );
                 }).toList(),
               );
             } else {
