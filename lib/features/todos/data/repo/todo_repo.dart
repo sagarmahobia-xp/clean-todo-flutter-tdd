@@ -28,4 +28,9 @@ class DriftTodoRepo extends TodoRepo {
   Future<void> markIncomplete(int id) async {
     await localDataSource.markIncomplete(id);
   }
+
+  @override
+  Future<void> deleteTodo(int id) async {
+    await localDataSource.deleteTodo(id);
+  }
 }

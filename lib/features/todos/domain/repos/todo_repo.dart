@@ -9,4 +9,6 @@ abstract class TodoRepo {
 
   Future<void> markIncomplete(int id);
 
+  Future<void> deleteTodo(int id);
+
 }

@@ -105,5 +105,21 @@ void main() {
         verify(() => mockDataSource.markIncomplete(id)).called(1);
       });
     });
+
+    group('Group - Repository - deleteTodo', () {
+      test('should call the data source with the correct id', () async {
+        // arrange
+        const id = 1;
+        when(
+          () => mockDataSource.deleteTodo(id),
+        ).thenAnswer((_) async {});
+
+        // act
+        await repo.deleteTodo(id);
+
+        // assert
+        verify(() => mockDataSource.deleteTodo(id)).called(1);
+      });
+    });
   });
 }
