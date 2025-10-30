@@ -1,6 +1,7 @@
 import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:clean_todo_tdd/features/todos/ui/blocs/todo_list_bloc.dart';
 import 'package:clean_todo_tdd/features/todos/ui/widgets/add_todo_form_widget.dart';
+import 'package:clean_todo_tdd/features/todos/ui/widgets/todo_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -49,22 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (state.todos.isNotEmpty) {
               return ListView(
                 children: state.todos.map((e) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          e.title,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(e.content ?? 'N/A'),
-                      ],
-                    ),
-                  );
+                  return TodoItemWidget(todo: e);
                 }).toList(),
               );
             } else {
