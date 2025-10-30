@@ -20,12 +20,14 @@ void main() {
     Widget buildWidget({
       required TodoEntity testTodo,
       Function(bool)? onChanged,
+      VoidCallback? onDelete,
     }) {
       return MaterialApp(
         home: Scaffold(
           body: TodoItemWidget(
             todo: testTodo,
             onChanged: onChanged ?? (_) {},
+            onDelete: onDelete,
           ),
         ),
       );
@@ -195,6 +197,33 @@ void main() {
         final completedTitleText = tester.widget<Text>(completedTitleFinder);
         final completedTitleStyle = completedTitleText.style as TextStyle;
         expect(completedTitleStyle.color, Colors.grey);
+      },
+    );
+    
+    testWidgets(
+      'should display delete icon and call onDelete when tapped',
+      (WidgetTester tester) async {
+        bool deleteCalled = false;
+
+        await tester.pumpWidget(
+          buildWidget(
+            testTodo: todo,
+            onDelete: () {
+              deleteCalled = true;
+            },
+          ),
+        );
+
+        await tester.pump();
+
+        // Verify the delete icon is present
+        expect(find.byIcon(Icons.delete), findsOneWidget);
+        
+        // Tap the delete icon
+        await tester.tap(find.byIcon(Icons.delete));
+        await tester.pump();
+
+        expect(deleteCalled, true);
       },
     );
   });

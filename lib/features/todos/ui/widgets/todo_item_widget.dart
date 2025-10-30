@@ -6,11 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class TodoItemWidget extends StatelessWidget {
   final TodoEntity todo;
   final Function(bool) onChanged;
+  final VoidCallback? onDelete;
 
   const TodoItemWidget({
     super.key,
     required this.todo,
     required this.onChanged,
+    this.onDelete,
   });
 
   @override
@@ -50,6 +52,10 @@ class TodoItemWidget extends StatelessWidget {
                 ),
               )
             : null,
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Colors.red),
+          onPressed: onDelete,
+        ),
       ),
     );
   }
