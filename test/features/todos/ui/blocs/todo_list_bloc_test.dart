@@ -3,6 +3,7 @@ import 'package:clean_todo_tdd/erros/failure.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/add_todo_usecase.dart'
     show AddTodoUseCase;
+import 'package:clean_todo_tdd/features/todos/domain/use_cases/delete_todo_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/get_todo_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_complete_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_incomplete_usecase.dart';
@@ -14,6 +15,8 @@ import 'package:mocktail/mocktail.dart';
 class GetTodoUseCaseMock extends Mock implements GetTodoUseCase {}
 
 class AddTodoUseCaseMock extends Mock implements AddTodoUseCase {}
+
+class DeleteTodoUseCaseMock extends Mock implements DeleteTodoUseCase {}
 
 class MarkTodoCompleteUseCaseMock extends Mock implements MarkTodoCompleteUseCase {}
 
@@ -28,17 +31,20 @@ void main() {
     late TodoListBloc bloc;
     late GetTodoUseCaseMock getTodoUseCaseMock;
     late AddTodoUseCaseMock addTodoUseCase;
+    late DeleteTodoUseCaseMock deleteTodoUseCaseMock;
     late MarkTodoCompleteUseCaseMock markTodoCompleteUseCaseMock;
     late MarkTodoIncompleteUseCaseMock markTodoIncompleteUseCaseMock;
 
     setUp(() {
       getTodoUseCaseMock = GetTodoUseCaseMock();
       addTodoUseCase = AddTodoUseCaseMock();
+      deleteTodoUseCaseMock = DeleteTodoUseCaseMock();
       markTodoCompleteUseCaseMock = MarkTodoCompleteUseCaseMock();
       markTodoIncompleteUseCaseMock = MarkTodoIncompleteUseCaseMock();
       bloc = TodoListBloc(
         getTodoUseCaseMock,
         addTodoUseCase,
+        deleteTodoUseCaseMock,
         markTodoCompleteUseCaseMock,
         markTodoIncompleteUseCaseMock,
       );
@@ -227,6 +233,53 @@ void main() {
         expect: () => [
           TodoListLoading(),
           TodoListLoadError(message: 'Failed to mark todo as incomplete'),
+        ],
+      );
+
+      blocTest(
+        'Test: Delete todo success,',
+        build: () {
+          when(() => deleteTodoUseCaseMock(1)).thenAnswer((_) async => Right(null));
+          when(() => getTodoUseCaseMock()).thenAnswer(
+            (_) async => Right([
+              TodoEntity(
+                id: 2,
+                title: 'Test Todo 2',
+                content: 'Test Content 2',
+                completed: false,
+              ),
+            ]),
+          );
+          return bloc;
+        },
+        act: (bloc) => bloc.add(DeleteTodoEvent(todoId: 1)),
+        expect: () => [
+          TodoListLoading(),
+          TodoListLoaded(
+            todos: [
+              TodoEntity(
+                id: 2,
+                title: 'Test Todo 2',
+                content: 'Test Content 2',
+                completed: false,
+              ),
+            ],
+          ),
+        ],
+      );
+
+      blocTest(
+        'Test: Delete todo failed,',
+        build: () {
+          when(() => deleteTodoUseCaseMock(1)).thenAnswer(
+            (_) async => Left(Failure(message: 'Failed to delete todo')),
+          );
+          return bloc;
+        },
+        act: (bloc) => bloc.add(DeleteTodoEvent(todoId: 1)),
+        expect: () => [
+          TodoListLoading(),
+          TodoListLoadError(message: 'Failed to delete todo'),
         ],
       );
     });

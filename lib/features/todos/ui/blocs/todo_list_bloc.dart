@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/add_todo_usecase.dart';
+import 'package:clean_todo_tdd/features/todos/domain/use_cases/delete_todo_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/get_todo_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_complete_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_incomplete_usecase.dart';
@@ -16,12 +17,14 @@ part 'todo_list_state.dart';
 class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
   final GetTodoUseCase getTodoUseCase;
   final AddTodoUseCase addTodoUseCase;
+  final DeleteTodoUseCase deleteTodoUseCase;
   final MarkTodoCompleteUseCase markTodoCompleteUseCase;
   final MarkTodoIncompleteUseCase markTodoIncompleteUseCase;
 
   TodoListBloc(
     this.getTodoUseCase,
     this.addTodoUseCase,
+    this.deleteTodoUseCase,
     this.markTodoCompleteUseCase,
     this.markTodoIncompleteUseCase,
   ) : super(TodoListInitial()) {
@@ -94,6 +97,29 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
       var todo = TodoEntity(id: event.todoId, title: '', content: '', completed: false);
       var result = await markTodoIncompleteUseCase(todo);
+
+      await result.fold(
+        (left) async {
+          emit(TodoListLoadError(message: left.message));
+        },
+        (right) async {
+          var todosResult = await getTodoUseCase();
+          await todosResult.fold(
+            (left) async {
+              emit(TodoListLoadError(message: left.message));
+            },
+            (right) async {
+              emit(TodoListLoaded(todos: right));
+            },
+          );
+        },
+      );
+    });
+
+    on<DeleteTodoEvent>((event, emit) async {
+      emit(TodoListLoading());
+
+      var result = await deleteTodoUseCase(event.todoId);
 
       await result.fold(
         (left) async {

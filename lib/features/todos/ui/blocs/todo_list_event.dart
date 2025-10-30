@@ -36,3 +36,12 @@ class MarkTodoIncompleteEvent extends TodoListEvent {
   @override
   List<Object?> get props => [todoId];
 }
+
+class DeleteTodoEvent extends TodoListEvent {
+  final int todoId;
+
+  const DeleteTodoEvent({required this.todoId});
+
+  @override
+  List<Object?> get props => [todoId];
+}
