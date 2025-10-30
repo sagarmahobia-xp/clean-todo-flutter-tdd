@@ -13,10 +13,6 @@ void main() {
   group('Add Todo Form Widget Tests', () {
     late TodoListBloc bloc;
 
-    setUpAll(() {
-      registerFallbackValue(LoadTodosEvent());
-    });
-
     setUp(() {
       bloc = MockTodoBloc();
     });
@@ -62,10 +58,14 @@ void main() {
         await tester.tap(addButton);
         await tester.pumpAndSettle();
 
-        verify(() => bloc.add(const AddTodoEvent(
+        verify(
+          () => bloc.add(
+            const AddTodoEvent(
               title: 'Todo Title',
               content: 'Todo Content',
-            ))).called(1);
+            ),
+          ),
+        ).called(1);
       },
     );
   });

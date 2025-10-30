@@ -12,10 +12,6 @@ void main() {
   late MarkTodoIncompleteUseCase markTodoIncompleteUseCase;
   late MockTodoRepo mockTodoRepo;
 
-  setUpAll(() {
-    registerFallbackValue(TodoEntity(id: 0, title: 'Test', content: 'Test'));
-  });
-
   setUp(() {
     mockTodoRepo = MockTodoRepo();
     markTodoIncompleteUseCase = MarkTodoIncompleteUseCase(todoRepo: mockTodoRepo);
