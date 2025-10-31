@@ -27,6 +27,8 @@ class DatabaseFailure extends Failure {
       'Unable to access local storage. Please try again.';
 }
 
+/*
+
 class NetworkFailure extends Failure {
   final Exception? exception;
   final StackTrace? stackTrace;
@@ -37,7 +39,6 @@ class NetworkFailure extends Failure {
   String get userFriendlyMessage =>
       'Unable to connect to the internet. Please check your connection.';
 }
-
 // Domain Layer Failures
 class ServerFailure extends Failure {
   final Exception? exception;
@@ -72,18 +73,6 @@ class ValidationFailure extends Failure {
       'Invalid input. Please check your data and try again.';
 }
 
-// Specific domain failures for Todo operations
-class TodoFailure extends Failure {
-  final Exception? exception;
-  final StackTrace? stackTrace;
-
-  const TodoFailure(super.message, {this.exception, this.stackTrace});
-
-  @override
-  String get userFriendlyMessage =>
-      'Unable to process your todo. Please try again.';
-}
-
 class TodoNotFoundFailure extends TodoFailure {
   final Exception? exception;
   final StackTrace? stackTrace;
@@ -97,6 +86,7 @@ class TodoNotFoundFailure extends TodoFailure {
   @override
   String get userFriendlyMessage => 'Todo not found. It may have been deleted.';
 }
+
 
 class TodoInvalidDataFailure extends TodoFailure {
   final Exception? exception;
@@ -112,6 +102,21 @@ class TodoInvalidDataFailure extends TodoFailure {
   String get userFriendlyMessage =>
       'Invalid todo data. Please check your input.';
 }
+
+*/
+
+// Specific domain failures for Todo operations
+class TodoFailure extends Failure {
+  final Exception? exception;
+  final StackTrace? stackTrace;
+
+  const TodoFailure(super.message, {this.exception, this.stackTrace});
+
+  @override
+  String get userFriendlyMessage =>
+      'Unable to process your todo. Please try again.';
+}
+
 
 // Specific operation failures
 class AddTodoFailure extends TodoFailure {
