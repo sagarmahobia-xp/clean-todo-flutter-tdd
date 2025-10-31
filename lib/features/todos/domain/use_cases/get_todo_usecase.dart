@@ -13,17 +13,6 @@ class GetTodoUseCase extends UseCaseWithoutParam<List<TodoEntity>> {
 
   @override
   Future<Either<Failure, List<TodoEntity>>> call() async {
-    try {
-      var todos = await todoRepo.getTodos();
-      return right(todos);
-    } catch (e) {
-      return left(
-        Failure(
-          message: "Failed to load todo",
-          error: e is Error ? e : null,
-          exception: e is Exception ? e : null,
-        ),
-      );
-    }
+    return await todoRepo.getTodos();
   }
 }

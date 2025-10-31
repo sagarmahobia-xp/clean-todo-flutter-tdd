@@ -4,13 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Failure', () {
     test('toString should return correct string representation', () {
-      final failure = Failure(message: 'Test message');
+      final failure = TodoFailure('Test message');
 
       expect(failure.toString(), 'Failure: Test message');
     });
 
     test('should handle empty message', () {
-      final failure = Failure(message: '');
+      final failure = TodoFailure('');
 
       expect(failure.toString(), 'Failure: ');
     });
@@ -19,7 +19,7 @@ void main() {
       const specialMessage =
           'Error: {code: 500, message: "Internal Server Error"}';
 
-      final failure = Failure(message: specialMessage);
+      final failure = TodoFailure(specialMessage);
 
       expect(failure.message, specialMessage);
     });

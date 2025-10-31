@@ -66,6 +66,30 @@ class _HomeScreenState extends State<HomeScreen> {
               return Container(child: Center(child: Text('No Todos Yet')));
             }
           }
+          
+          if (state is TodoListLoadError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text(
+                    state.message,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      bloc.add(LoadTodosEvent());
+                    },
+                    child: Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
 
           return Center(child: CircularProgressIndicator());
         },

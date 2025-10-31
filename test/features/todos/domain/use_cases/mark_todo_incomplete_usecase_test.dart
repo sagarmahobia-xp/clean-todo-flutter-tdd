@@ -2,6 +2,7 @@ import 'package:clean_todo_tdd/di/di_config.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/domain/repos/todo_repo.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_incomplete_usecase.dart';
+import 'package:clean_todo_tdd/erros/failure.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -22,19 +23,19 @@ void main() {
 
     test('should mark todo as incomplete using the repository', () async {
       // arrange
-      when(() => mockTodoRepo.markIncomplete(todo.id)).thenAnswer((_) async => null);
+      when(() => mockTodoRepo.markIncomplete(todo.id)).thenAnswer((_) async => right(null));
 
       // act
       final result = await markTodoIncompleteUseCase(todo);
 
       // assert
-      expect(result, Right(null));
+      expect(result.isRight(), true);
       verify(() => mockTodoRepo.markIncomplete(todo.id)).called(1);
     });
 
     test('should return failure when repository throws exception', () async {
       // arrange
-      when(() => mockTodoRepo.markIncomplete(todo.id)).thenThrow(Exception("Failed to mark todo as incomplete"));
+      when(() => mockTodoRepo.markIncomplete(todo.id)).thenAnswer((_) async => left(TodoFailure('Failed to mark todo as incomplete')));
 
       // act
       final result = await markTodoIncompleteUseCase(todo);

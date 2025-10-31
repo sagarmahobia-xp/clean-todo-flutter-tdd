@@ -46,7 +46,8 @@ void main() {
           TodoEntity(id: 0, title: 'Test Title', content: 'Test Content'),
         );
 
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         
         // Assert
         expect(todos.length, 1);
@@ -67,7 +68,9 @@ void main() {
         
         // Act
         await dataSource.addTodo(todoEntity);
-        var storedTodoEntity = (await dataSource.getTodos()).first;
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
+        var storedTodoEntity = todos.first;
 
         // Assert
         expect(todoEntity.title, storedTodoEntity.title);
@@ -79,7 +82,8 @@ void main() {
       'Test - Data - SqfliteTodoLocalDataSource: getTodos returns empty list initially',
       () async {
         // Act
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         
         // Assert
         expect(todos, isA<List<TodoEntity>>());
@@ -101,7 +105,8 @@ void main() {
           TodoEntity(id: 0, title: 'Todo 3', content: 'Content 3'),
         );
 
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         
         // Assert
         expect(todos.length, 3);
@@ -118,7 +123,8 @@ void main() {
         await dataSource.addTodo(
           TodoEntity(id: 0, title: 'Test Todo', content: 'Test Content'),
         );
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         var todoId = todos.first.id;
 
         // Verify initial state
@@ -126,7 +132,8 @@ void main() {
 
         // Act
         await dataSource.markComplete(todoId);
-        var updatedTodos = await dataSource.getTodos();
+        var updatedResult = await dataSource.getTodos();
+        var updatedTodos = updatedResult.fold((l) => [], (r) => r);
 
         // Assert
         expect(updatedTodos.firstWhere((todo) => todo.id == todoId).completed, true);
@@ -140,7 +147,8 @@ void main() {
         await dataSource.addTodo(
           TodoEntity(id: 0, title: 'Test Todo', content: 'Test Content', completed: true),
         );
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         var todoId = todos.first.id;
 
         // Verify initial state
@@ -148,7 +156,8 @@ void main() {
 
         // Act
         await dataSource.markIncomplete(todoId);
-        var updatedTodos = await dataSource.getTodos();
+        var updatedResult = await dataSource.getTodos();
+        var updatedTodos = updatedResult.fold((l) => [], (r) => r);
 
         // Assert
         expect(updatedTodos.firstWhere((todo) => todo.id == todoId).completed, false);
@@ -162,7 +171,8 @@ void main() {
         await dataSource.addTodo(
           TodoEntity(id: 0, title: 'Todo to Delete', content: 'Content to Delete'),
         );
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         var todoId = todos.first.id;
         
         // Verify initial state
@@ -171,7 +181,8 @@ void main() {
 
         // Act
         await dataSource.deleteTodo(todoId);
-        var updatedTodos = await dataSource.getTodos();
+        var updatedResult = await dataSource.getTodos();
+        var updatedTodos = updatedResult.fold((l) => [], (r) => r);
 
         // Assert
         expect(updatedTodos.length, 0);
@@ -184,7 +195,8 @@ void main() {
         // Arrange
         var initialTodo = TodoEntity(id: 0, title: 'Initial Title', content: 'Initial Content', completed: false);
         await dataSource.addTodo(initialTodo);
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         var todoId = todos.first.id;
         var updatedTodo = TodoEntity(
           id: todoId,
@@ -200,7 +212,8 @@ void main() {
 
         // Act
         await dataSource.updateTodo(updatedTodo);
-        var updatedTodos = await dataSource.getTodos();
+        var updatedResult = await dataSource.getTodos();
+        var updatedTodos = updatedResult.fold((l) => [], (r) => r);
 
         // Assert
         var todo = updatedTodos.firstWhere((todo) => todo.id == todoId);
@@ -216,7 +229,8 @@ void main() {
         // Arrange
         var initialTodo = TodoEntity(id: 0, title: 'Initial Title', content: 'Initial Content', completed: true);
         await dataSource.addTodo(initialTodo);
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         var todoId = todos.first.id;
         var updatedTodo = TodoEntity(
           id: todoId,
@@ -232,7 +246,8 @@ void main() {
 
         // Act
         await dataSource.updateTodo(updatedTodo);
-        var updatedTodos = await dataSource.getTodos();
+        var updatedResult = await dataSource.getTodos();
+        var updatedTodos = updatedResult.fold((l) => [], (r) => r);
 
         // Assert
         var todo = updatedTodos.firstWhere((todo) => todo.id == todoId);
@@ -248,7 +263,8 @@ void main() {
         // Arrange
         var initialTodo = TodoEntity(id: 0, title: 'Initial Title', content: 'Initial Content', completed: false);
         await dataSource.addTodo(initialTodo);
-        var todos = await dataSource.getTodos();
+        var result = await dataSource.getTodos();
+        var todos = result.fold((l) => [], (r) => r);
         var todoId = todos.first.id;
         var updatedTodo = TodoEntity(
           id: todoId,
@@ -264,7 +280,8 @@ void main() {
 
         // Act
         await dataSource.updateTodo(updatedTodo);
-        var updatedTodos = await dataSource.getTodos();
+        var updatedResult = await dataSource.getTodos();
+        var updatedTodos = updatedResult.fold((l) => [], (r) => r);
 
         // Assert
         var todo = updatedTodos.firstWhere((todo) => todo.id == todoId);

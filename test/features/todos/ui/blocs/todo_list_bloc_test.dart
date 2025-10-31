@@ -55,7 +55,7 @@ void main() {
       build: () {
         when(() => getTodoUseCaseMock()).thenAnswer(
           (_) async =>
-              Right([TodoEntity(id: 1, title: 'title', content: 'content')]),
+              right([TodoEntity(id: 1, title: 'title', content: 'content')]),
         );
         return bloc;
       },
@@ -72,14 +72,14 @@ void main() {
       'Test: Load todo failed,',
       build: () {
         when(() => getTodoUseCaseMock()).thenAnswer(
-          (_) async => Left(Failure(message: 'Failed to load todos')),
+          (_) async => left(GetTodosFailure('Failed to load todos')),
         );
         return bloc;
       },
       act: (bloc) => bloc.add(LoadTodosEvent()),
       expect: () => [
         TodoListLoading(),
-        TodoListLoadError(message: 'Failed to load todos'),
+        TodoListLoadError(message: 'Unable to load todos. Please try again.'),
       ],
     );
 
@@ -91,8 +91,8 @@ void main() {
           content: 'Test Add Todo Bloc',
         );
 
-        when(() => addTodoUseCase(todo)).thenAnswer((_) async => Right(1));
-        when(() => getTodoUseCaseMock()).thenAnswer((_) async => Right([todo]));
+        when(() => addTodoUseCase(todo)).thenAnswer((_) async => right(1));
+        when(() => getTodoUseCaseMock()).thenAnswer((_) async => right([todo]));
         return bloc;
       },
       act: (bloc) => bloc.add(
@@ -124,9 +124,9 @@ void main() {
 
         when(
           () => addTodoUseCase(todo),
-        ).thenAnswer((_) async => Left(Failure(message: 'Failed to add todo')));
+        ).thenAnswer((_) async => left(AddTodoFailure('Failed to add todo')));
 
-        when(() => getTodoUseCaseMock()).thenAnswer((_) async => Right([todo]));
+        when(() => getTodoUseCaseMock()).thenAnswer((_) async => right([todo]));
         return bloc;
       },
       act: (bloc) => bloc.add(
@@ -137,7 +137,7 @@ void main() {
       ),
       expect: () => [
         TodoListLoading(),
-        TodoListLoadError(message: 'Failed to add todo'),
+        TodoListLoadError(message: 'Unable to add todo. Please try again.'),
       ],
     );
 
@@ -145,9 +145,9 @@ void main() {
       blocTest(
         'Test: Mark todo complete success,',
         build: () {
-          when(() => markTodoCompleteUseCaseMock(any())).thenAnswer((_) async => Right(null));
+          when(() => markTodoCompleteUseCaseMock(any())).thenAnswer((_) async => right(null));
           when(() => getTodoUseCaseMock()).thenAnswer(
-            (_) async => Right([
+            (_) async => right([
               TodoEntity(
                 id: 1,
                 title: 'Test Todo',
@@ -178,23 +178,23 @@ void main() {
         'Test: Mark todo complete failed,',
         build: () {
           when(() => markTodoCompleteUseCaseMock(any())).thenAnswer(
-            (_) async => Left(Failure(message: 'Failed to mark todo as complete')),
+            (_) async => left(UpdateTodoFailure('Failed to mark todo as complete')),
           );
           return bloc;
         },
         act: (bloc) => bloc.add(MarkTodoCompleteEvent(todoId: 1)),
         expect: () => [
           TodoListLoading(),
-          TodoListLoadError(message: 'Failed to mark todo as complete'),
+          TodoListLoadError(message: 'Unable to update todo. Please try again.'),
         ],
       );
 
       blocTest(
         'Test: Mark todo incomplete success,',
         build: () {
-          when(() => markTodoIncompleteUseCaseMock(any())).thenAnswer((_) async => Right(null));
+          when(() => markTodoIncompleteUseCaseMock(any())).thenAnswer((_) async => right(null));
           when(() => getTodoUseCaseMock()).thenAnswer(
-            (_) async => Right([
+            (_) async => right([
               TodoEntity(
                 id: 1,
                 title: 'Test Todo',
@@ -225,23 +225,23 @@ void main() {
         'Test: Mark todo incomplete failed,',
         build: () {
           when(() => markTodoIncompleteUseCaseMock(any())).thenAnswer(
-            (_) async => Left(Failure(message: 'Failed to mark todo as incomplete')),
+            (_) async => left(UpdateTodoFailure('Failed to mark todo as incomplete')),
           );
           return bloc;
         },
         act: (bloc) => bloc.add(MarkTodoIncompleteEvent(todoId: 1)),
         expect: () => [
           TodoListLoading(),
-          TodoListLoadError(message: 'Failed to mark todo as incomplete'),
+          TodoListLoadError(message: 'Unable to update todo. Please try again.'),
         ],
       );
 
       blocTest(
         'Test: Delete todo success,',
         build: () {
-          when(() => deleteTodoUseCaseMock(1)).thenAnswer((_) async => Right(null));
+          when(() => deleteTodoUseCaseMock(1)).thenAnswer((_) async => right(null));
           when(() => getTodoUseCaseMock()).thenAnswer(
-            (_) async => Right([
+            (_) async => right([
               TodoEntity(
                 id: 2,
                 title: 'Test Todo 2',
@@ -272,14 +272,14 @@ void main() {
         'Test: Delete todo failed,',
         build: () {
           when(() => deleteTodoUseCaseMock(1)).thenAnswer(
-            (_) async => Left(Failure(message: 'Failed to delete todo')),
+            (_) async => left(DeleteTodoFailure('Failed to delete todo')),
           );
           return bloc;
         },
         act: (bloc) => bloc.add(DeleteTodoEvent(todoId: 1)),
         expect: () => [
           TodoListLoading(),
-          TodoListLoadError(message: 'Failed to delete todo'),
+          TodoListLoadError(message: 'Unable to delete todo. Please try again.'),
         ],
       );
     });

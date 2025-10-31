@@ -1,5 +1,6 @@
 import 'package:clean_todo_tdd/features/todos/domain/repos/todo_repo.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/delete_todo_usecase.dart';
+import 'package:clean_todo_tdd/erros/failure.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocktail/mocktail.dart';
@@ -20,13 +21,13 @@ void main() {
 
     test('should delete todo using the repository', () async {
       // arrange
-      when(() => mockTodoRepo.deleteTodo(todoId)).thenAnswer((_) async {});
+      when(() => mockTodoRepo.deleteTodo(todoId)).thenAnswer((_) async => right(null));
 
       // act
       final result = await deleteTodoUseCase(todoId);
 
       // assert
-      expect(result, const Right(null));
+      expect(result.isRight(), true);
       verify(() => mockTodoRepo.deleteTodo(todoId)).called(1);
     });
 
@@ -34,7 +35,7 @@ void main() {
       // arrange
       when(
         () => mockTodoRepo.deleteTodo(todoId),
-      ).thenThrow(Exception('Failed to delete todo'));
+      ).thenAnswer((_) async => left(TodoFailure('Failed to delete todo')));
 
       // act
       final result = await deleteTodoUseCase(todoId);

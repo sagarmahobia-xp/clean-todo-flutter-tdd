@@ -12,17 +12,6 @@ class DeleteTodoUseCase extends UseCaseWithParam<void, int> {
 
   @override
   Future<Either<Failure, void>> call(int params) async {
-    try {
-      await repo.deleteTodo(params);
-      return const Right(null);
-    } catch (e) {
-      return Left(
-        Failure(
-          exception: e is Exception ? e : null,
-          error: e is Error ? e : null,
-          message: 'Failed to delete todo',
-        ),
-      );
-    }
+    return await repo.deleteTodo(params);
   }
 }

@@ -13,17 +13,6 @@ class MarkTodoIncompleteUseCase extends UseCaseWithParam<void, TodoEntity> {
 
   @override
   Future<Either<Failure, void>> call(TodoEntity params) async {
-    try {
-      await todoRepo.markIncomplete(params.id);
-      return right(null);
-    } catch (e) {
-      return left(
-        Failure(
-          message: 'Failed to mark todo as incomplete',
-          error: e is Error ? e : null,
-          exception: e is Exception ? e : null,
-        ),
-      );
-    }
+    return await todoRepo.markIncomplete(params.id);
   }
 }

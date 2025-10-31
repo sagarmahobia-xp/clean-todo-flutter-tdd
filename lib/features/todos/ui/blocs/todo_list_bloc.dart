@@ -6,7 +6,6 @@ import 'package:clean_todo_tdd/features/todos/domain/use_cases/get_todo_usecase.
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_complete_usecase.dart';
 import 'package:clean_todo_tdd/features/todos/domain/use_cases/mark_todo_incomplete_usecase.dart';
 import 'package:equatable/equatable.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 
 part 'todo_list_event.dart';
@@ -35,7 +34,7 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
       result.fold(
         (left) {
-          emit(TodoListLoadError(message: left.message));
+          emit(TodoListLoadError(message: left.userFriendlyMessage));
         },
         (right) {
           emit(TodoListLoaded(todos: right));
@@ -51,14 +50,14 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
       await addResult.fold(
         (left) {
-          emit(TodoListLoadError(message: left.message));
+          emit(TodoListLoadError(message: left.userFriendlyMessage));
         },
         (right) async {
           var result = await getTodoUseCase();
 
           result.fold(
             (left) {
-              emit(TodoListLoadError(message: left.message));
+              emit(TodoListLoadError(message: left.userFriendlyMessage));
             },
             (right) {
               emit(TodoListLoaded(todos: right));
@@ -76,13 +75,13 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
       await result.fold(
         (left) async {
-          emit(TodoListLoadError(message: left.message));
+          emit(TodoListLoadError(message: left.userFriendlyMessage));
         },
         (right) async {
           var todosResult = await getTodoUseCase();
           await todosResult.fold(
             (left) async {
-              emit(TodoListLoadError(message: left.message));
+              emit(TodoListLoadError(message: left.userFriendlyMessage));
             },
             (right) async {
               emit(TodoListLoaded(todos: right));
@@ -100,13 +99,13 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
       await result.fold(
         (left) async {
-          emit(TodoListLoadError(message: left.message));
+          emit(TodoListLoadError(message: left.userFriendlyMessage));
         },
         (right) async {
           var todosResult = await getTodoUseCase();
           await todosResult.fold(
             (left) async {
-              emit(TodoListLoadError(message: left.message));
+              emit(TodoListLoadError(message: left.userFriendlyMessage));
             },
             (right) async {
               emit(TodoListLoaded(todos: right));
@@ -123,13 +122,13 @@ class TodoListBloc extends Bloc<TodoListEvent, TodoListState> {
 
       await result.fold(
         (left) async {
-          emit(TodoListLoadError(message: left.message));
+          emit(TodoListLoadError(message: left.userFriendlyMessage));
         },
         (right) async {
           var todosResult = await getTodoUseCase();
           await todosResult.fold(
             (left) async {
-              emit(TodoListLoadError(message: left.message));
+              emit(TodoListLoadError(message: left.userFriendlyMessage));
             },
             (right) async {
               emit(TodoListLoaded(todos: right));
