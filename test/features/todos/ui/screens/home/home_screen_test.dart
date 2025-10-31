@@ -36,7 +36,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
 
-      var titleTxt = find.text('Todo List');
+      var titleTxt = find.text('Clean Todos');
 
       expect(titleTxt, findsOneWidget);
     });
@@ -53,7 +53,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
       await tester.pumpAndSettle();
-      var noTodoText = find.text('No Todos Yet');
+      var noTodoText = find.text('No todos yet!');
 
       expect(noTodoText, findsOneWidget);
     });
@@ -215,7 +215,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Find and tap the delete icon
-      await tester.tap(find.byIcon(Icons.delete));
+      await tester.tap(find.byIcon(Icons.delete_outline));
+      await tester.pumpAndSettle();
+
+      // Tap the delete confirmation button in the dialog
+      await tester.tap(find.text('Delete'));
       await tester.pump();
 
       verify(() => bloc.add(const DeleteTodoEvent(todoId: 1))).called(1);
@@ -236,7 +240,7 @@ void main() {
 
       expect(find.text('Network error occurred'), findsOneWidget);
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
-      expect(find.text('Retry'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
     });
 
     testWidgets('Test - Tapping retry button dispatches LoadTodosEvent', (
@@ -255,9 +259,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify retry button is present
-      expect(find.text('Retry'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
 
-      await tester.tap(find.text('Retry'));
+      await tester.tap(find.text('Try Again'));
       await tester.pump();
 
       // LoadTodosEvent is called once in initState and once when retry is tapped

@@ -2,7 +2,6 @@ import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:clean_todo_tdd/features/todos/ui/widgets/todo_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'dart:async';
 
 void main() {
   late TodoEntity todo;
@@ -196,7 +195,7 @@ void main() {
 
         final completedTitleText = tester.widget<Text>(completedTitleFinder);
         final completedTitleStyle = completedTitleText.style as TextStyle;
-        expect(completedTitleStyle.color, Colors.grey);
+        expect(completedTitleStyle.color, Colors.grey[700]);
       },
     );
     
@@ -217,10 +216,10 @@ void main() {
         await tester.pump();
 
         // Verify the delete icon is present
-        expect(find.byIcon(Icons.delete), findsOneWidget);
+        expect(find.byIcon(Icons.delete_outline), findsOneWidget);
         
         // Tap the delete icon
-        await tester.tap(find.byIcon(Icons.delete));
+        await tester.tap(find.byIcon(Icons.delete_outline));
         await tester.pump();
 
         expect(deleteCalled, true);

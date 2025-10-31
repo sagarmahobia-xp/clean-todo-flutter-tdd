@@ -1,7 +1,5 @@
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
-import 'package:clean_todo_tdd/features/todos/ui/blocs/todo_list_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TodoItemWidget extends StatelessWidget {
   final TodoEntity todo;
@@ -18,43 +16,108 @@ class TodoItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      child: ListTile(
-        leading: Checkbox(
-          value: todo.completed,
-          onChanged: (bool? value) {
-            if (value != null) {
-              onChanged(value);
-            }
-          },
-        ),
-        title: Text(
-          todo.title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            decoration: todo.completed ? TextDecoration.lineThrough : null,
-            color: todo.completed ? Colors.grey : null,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
-        ),
-        subtitle: todo.content != null && todo.content!.isNotEmpty
-            ? Text(
-                todo.content!,
-                style: TextStyle(
-                  decoration: todo.completed
-                      ? TextDecoration.lineThrough
-                      : null,
-                  color: todo.completed ? Colors.grey : null,
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Checkbox
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: todo.completed ? Colors.green[600]! : Colors.grey[400]!,
+                    width: 2,
+                  ),
+                  color: todo.completed ? Colors.green[600] : Colors.transparent,
                 ),
-              )
-            : null,
-        trailing: IconButton(
-          icon: Icon(Icons.delete, color: Colors.red),
-          onPressed: onDelete,
+                child: Theme(
+                  data: ThemeData(
+                    checkboxTheme: CheckboxThemeData(
+                      shape: CircleBorder(),
+                    ),
+                  ),
+                  child: Checkbox(
+                    value: todo.completed,
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        onChanged(value);
+                      }
+                    },
+                    activeColor: Colors.transparent,
+                    checkColor: Colors.white,
+                    side: BorderSide.none,
+                  ),
+                ),
+              ),
+              SizedBox(width: 16),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      todo.title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        decoration: todo.completed ? TextDecoration.lineThrough : null,
+                        decorationThickness: 2,
+                        decorationColor: todo.completed ? Colors.grey : null,
+                        color: todo.completed ? Colors.grey[700] : Colors.grey[900],
+                      ),
+                    ),
+                    if (todo.content != null && todo.content!.isNotEmpty) ...[
+                      SizedBox(height: 6),
+                      Text(
+                        todo.content!,
+                        style: TextStyle(
+                          fontSize: 14,
+                          decoration: todo.completed ? TextDecoration.lineThrough : null,
+                          decorationThickness: 2,
+                          decorationColor: todo.completed ? Colors.grey : null,
+                          color: todo.completed ? Colors.grey[600] : Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(width: 12),
+              // Delete button
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.delete_outline, color: Colors.red[600]),
+                  iconSize: 20,
+                  padding: EdgeInsets.zero,
+                  onPressed: onDelete,
+                  tooltip: 'Delete todo',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
