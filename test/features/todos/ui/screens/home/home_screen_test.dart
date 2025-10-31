@@ -15,11 +15,14 @@ class TodoListBlocMock extends Mock implements TodoListBloc {
 
 void main() {
   group('Group- UI - Home', () {
-    late final TodoListBloc bloc;
+    late TodoListBloc bloc;
 
     setUpAll(() async {
       await configureDependencies(environment: Environment.test);
       getIt.allowReassignment = true;
+    });
+
+    setUp(() {
       bloc = TodoListBlocMock();
       getIt.registerFactory<TodoListBloc>(() => bloc);
     });
@@ -105,6 +108,14 @@ void main() {
 
     testWidgets('Test - add button present in homescreen', (tester) async {
       //FloatingActionButton
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoaded(todos: []),
+        ]),
+        initialState: TodoListInitial(),
+      );
+
       await tester.pumpWidget(MaterialApp(home: HomeScreen()));
       await tester.pumpAndSettle();
       var fab = find.byType(FloatingActionButton);
@@ -208,6 +219,49 @@ void main() {
       await tester.pump();
 
       verify(() => bloc.add(const DeleteTodoEvent(todoId: 1))).called(1);
+    });
+
+    testWidgets('Test - Error state displays correctly', (tester) async {
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoading(),
+          TodoListLoadError(message: 'Network error occurred'),
+        ]),
+        initialState: TodoListInitial(),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Network error occurred'), findsOneWidget);
+      expect(find.byIcon(Icons.error_outline), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+    });
+
+    testWidgets('Test - Tapping retry button dispatches LoadTodosEvent', (
+      tester,
+    ) async {
+      whenListen(
+        bloc,
+        Stream.fromIterable(<TodoListState>[
+          TodoListLoading(),
+          TodoListLoadError(message: 'Failed to load todos'),
+        ]),
+        initialState: TodoListInitial(),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: HomeScreen()));
+      await tester.pumpAndSettle();
+
+      // Verify retry button is present
+      expect(find.text('Retry'), findsOneWidget);
+
+      await tester.tap(find.text('Retry'));
+      await tester.pump();
+
+      // LoadTodosEvent is called once in initState and once when retry is tapped
+      verify(() => bloc.add(LoadTodosEvent())).called(2);
     });
   });
 }
