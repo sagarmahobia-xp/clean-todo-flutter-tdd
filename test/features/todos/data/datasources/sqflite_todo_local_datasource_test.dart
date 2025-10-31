@@ -1,8 +1,13 @@
+import 'package:clean_todo_tdd/erros/failure.dart';
 import 'package:clean_todo_tdd/features/todos/data/datasources/sqflite_todo_local_datasource.dart';
 import 'package:clean_todo_tdd/features/todos/data/datasources/todo_local_datasource.dart';
 import 'package:clean_todo_tdd/features/todos/domain/entities/todo_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+// Mock classes for testing failure scenarios
+class MockDatabase extends Mock implements Database {}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -290,5 +295,383 @@ void main() {
         expect(todo.completed, true);
       },
     );
+  });
+
+  group('Group - Data - SqfliteTodoLocalDataSource - Failure Cases', () {
+    late TodoLocalDataSource dataSource;
+    late MockDatabase mockDatabase;
+
+    setUp(() {
+      mockDatabase = MockDatabase();
+      dataSource = SqfliteTodoLocalDataSource(database: mockDatabase);
+    });
+
+    group('addTodo failure cases', () {
+      test(
+        'should return DatabaseFailure when database.insert throws exception',
+        () async {
+          // Arrange
+          final todo = TodoEntity(
+            id: 0,
+            title: 'Test Title',
+            content: 'Test Content',
+          );
+          final exception = Exception('Database insert failed');
+          when(
+            () => mockDatabase.insert(
+              any(),
+              any(),
+              conflictAlgorithm: any(named: 'conflictAlgorithm'),
+            ),
+          ).thenThrow(exception);
+
+          // Act
+          final result = await dataSource.addTodo(todo);
+
+          // Assert
+          expect(result.isLeft(), true);
+          result.fold(
+            (failure) {
+              expect(failure, isA<DatabaseFailure>());
+              expect(failure.message, contains('Failed to add todo'));
+              expect(failure.exception, equals(exception));
+              expect(failure.stackTrace, isNotNull);
+            },
+            (_) => fail('Expected failure, got success'),
+          );
+        },
+      );
+
+      test(
+        'should return DatabaseFailure with proper message when insert fails',
+        () async {
+          // Arrange
+          final todo = TodoEntity(id: 0, title: 'Test', content: 'Content');
+          when(
+            () => mockDatabase.insert(
+              any(),
+              any(),
+              conflictAlgorithm: any(named: 'conflictAlgorithm'),
+            ),
+          ).thenThrow(Exception('Constraint violation'));
+
+          // Act
+          final result = await dataSource.addTodo(todo);
+
+          // Assert
+          result.fold(
+            (failure) {
+              expect(failure.message, contains('Failed to add todo'));
+              expect(failure.message, contains('Constraint violation'));
+            },
+            (_) => fail('Expected failure'),
+          );
+        },
+      );
+    });
+
+    group('getTodos failure cases', () {
+      test(
+        'should return DatabaseFailure when database.query throws exception',
+        () async {
+          // Arrange
+          final exception = Exception('Failed to query database');
+          when(() => mockDatabase.query(any())).thenThrow(exception);
+
+          // Act
+          final result = await dataSource.getTodos();
+
+          // Assert
+          expect(result.isLeft(), true);
+          result.fold(
+            (failure) {
+              expect(failure, isA<DatabaseFailure>());
+              expect(failure.message, contains('Failed to get todos'));
+              expect(failure.exception, equals(exception));
+              expect(failure.stackTrace, isNotNull);
+            },
+            (_) => fail('Expected failure, got success'),
+          );
+        },
+      );
+
+      test(
+        'should return DatabaseFailure with proper error details',
+        () async {
+          // Arrange
+          when(() => mockDatabase.query(any())).thenThrow(
+            Exception('Database connection lost'),
+          );
+
+          // Act
+          final result = await dataSource.getTodos();
+
+          // Assert
+          result.fold(
+            (failure) {
+              expect(failure.message, contains('Failed to get todos'));
+              expect(failure.message, contains('Database connection lost'));
+            },
+            (_) => fail('Expected failure'),
+          );
+        },
+      );
+    });
+
+    group('markComplete failure cases', () {
+      test(
+        'should return DatabaseFailure when database.update throws exception',
+        () async {
+          // Arrange
+          const id = 1;
+          final exception = Exception('Update operation failed');
+          when(
+            () => mockDatabase.update(
+              any(),
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(exception);
+
+          // Act
+          final result = await dataSource.markComplete(id);
+
+          // Assert
+          expect(result.isLeft(), true);
+          result.fold(
+            (failure) {
+              expect(failure, isA<DatabaseFailure>());
+              expect(failure.message, contains('Failed to mark todo as complete'));
+              expect(failure.exception, equals(exception));
+              expect(failure.stackTrace, isNotNull);
+            },
+            (_) => fail('Expected failure, got success'),
+          );
+        },
+      );
+
+      test(
+        'should propagate error details in DatabaseFailure',
+        () async {
+          // Arrange
+          const id = 1;
+          when(
+            () => mockDatabase.update(
+              any(),
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(Exception('Todo not found'));
+
+          // Act
+          final result = await dataSource.markComplete(id);
+
+          // Assert
+          result.fold(
+            (failure) {
+              expect(failure.message, contains('Failed to mark todo as complete'));
+              expect(failure.message, contains('Todo not found'));
+            },
+            (_) => fail('Expected failure'),
+          );
+        },
+      );
+    });
+
+    group('markIncomplete failure cases', () {
+      test(
+        'should return DatabaseFailure when database.update throws exception',
+        () async {
+          // Arrange
+          const id = 1;
+          final exception = Exception('Database write error');
+          when(
+            () => mockDatabase.update(
+              any(),
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(exception);
+
+          // Act
+          final result = await dataSource.markIncomplete(id);
+
+          // Assert
+          expect(result.isLeft(), true);
+          result.fold(
+            (failure) {
+              expect(failure, isA<DatabaseFailure>());
+              expect(failure.message, contains('Failed to mark todo as incomplete'));
+              expect(failure.exception, equals(exception));
+              expect(failure.stackTrace, isNotNull);
+            },
+            (_) => fail('Expected failure, got success'),
+          );
+        },
+      );
+
+      test(
+        'should include error details in failure message',
+        () async {
+          // Arrange
+          const id = 1;
+          when(
+            () => mockDatabase.update(
+              any(),
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(Exception('Disk full'));
+
+          // Act
+          final result = await dataSource.markIncomplete(id);
+
+          // Assert
+          result.fold(
+            (failure) {
+              expect(failure.message, contains('Failed to mark todo as incomplete'));
+              expect(failure.message, contains('Disk full'));
+            },
+            (_) => fail('Expected failure'),
+          );
+        },
+      );
+    });
+
+    group('deleteTodo failure cases', () {
+      test(
+        'should return DatabaseFailure when database.delete throws exception',
+        () async {
+          // Arrange
+          const id = 1;
+          final exception = Exception('Delete operation failed');
+          when(
+            () => mockDatabase.delete(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(exception);
+
+          // Act
+          final result = await dataSource.deleteTodo(id);
+
+          // Assert
+          expect(result.isLeft(), true);
+          result.fold(
+            (failure) {
+              expect(failure, isA<DatabaseFailure>());
+              expect(failure.message, contains('Failed to delete todo'));
+              expect(failure.exception, equals(exception));
+              expect(failure.stackTrace, isNotNull);
+            },
+            (_) => fail('Expected failure, got success'),
+          );
+        },
+      );
+
+      test(
+        'should return DatabaseFailure with error context',
+        () async {
+          // Arrange
+          const id = 1;
+          when(
+            () => mockDatabase.delete(
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(Exception('Foreign key constraint failed'));
+
+          // Act
+          final result = await dataSource.deleteTodo(id);
+
+          // Assert
+          result.fold(
+            (failure) {
+              expect(failure.message, contains('Failed to delete todo'));
+              expect(failure.message, contains('Foreign key constraint failed'));
+            },
+            (_) => fail('Expected failure'),
+          );
+        },
+      );
+    });
+
+    group('updateTodo failure cases', () {
+      test(
+        'should return DatabaseFailure when database.update throws exception',
+        () async {
+          // Arrange
+          final todo = TodoEntity(
+            id: 1,
+            title: 'Updated Title',
+            content: 'Updated Content',
+            completed: true,
+          );
+          final exception = Exception('Update failed');
+          when(
+            () => mockDatabase.update(
+              any(),
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(exception);
+
+          // Act
+          final result = await dataSource.updateTodo(todo);
+
+          // Assert
+          expect(result.isLeft(), true);
+          result.fold(
+            (failure) {
+              expect(failure, isA<DatabaseFailure>());
+              expect(failure.message, contains('Failed to update todo'));
+              expect(failure.exception, equals(exception));
+              expect(failure.stackTrace, isNotNull);
+            },
+            (_) => fail('Expected failure, got success'),
+          );
+        },
+      );
+
+      test(
+        'should propagate detailed error message in DatabaseFailure',
+        () async {
+          // Arrange
+          final todo = TodoEntity(
+            id: 1,
+            title: 'Test',
+            content: 'Test',
+            completed: false,
+          );
+          when(
+            () => mockDatabase.update(
+              any(),
+              any(),
+              where: any(named: 'where'),
+              whereArgs: any(named: 'whereArgs'),
+            ),
+          ).thenThrow(Exception('Invalid data type'));
+
+          // Act
+          final result = await dataSource.updateTodo(todo);
+
+          // Assert
+          result.fold(
+            (failure) {
+              expect(failure.message, contains('Failed to update todo'));
+              expect(failure.message, contains('Invalid data type'));
+            },
+            (_) => fail('Expected failure'),
+          );
+        },
+      );
+    });
   });
 }
